@@ -332,6 +332,8 @@ body.has-admin #toast{bottom:calc(88px + env(safe-area-inset-bottom))}
   <div class="lb-bar"><span id="lbTitle"></span><span class="lb-count" id="lbCount"></span></div>
 </div>
 
+<input type="file" id="profileInput" accept="image/jpeg,image/png,image/webp" hidden>
+
 <div id="toast" popover="manual" role="status" aria-live="polite"></div>
 
 <!-- Tus datos personales viven en config.js -->
@@ -340,9 +342,9 @@ body.has-admin #toast{bottom:calc(88px + env(safe-area-inset-bottom))}
 'use strict';
 
 const CONFIG = Object.assign({
-  API_URL: 'https://script.google.com/macros/s/AKfycbwNsISePyQxIIhHJwCUnancfHCs5mW-leXh2Rz_X9HkHWvK1my0RTWj02SWkA5h_O-qpg/exec', GOOGLE_CLIENT_ID: '422500526386-30n229h03ksvj068f9eom2edvhqo051g.apps.googleusercontent.com',
+  API_URL: 'https://script.google.com/macros/s/AKfycbyZDFd0fZcWbYR9buN_Lbzq6ApLi09s_LhumJe5X4zVE02pDhikAYh9NtiqahxPUU_FYA/exec', GOOGLE_CLIENT_ID: '422500526386-30n229h03ksvj068f9eom2edvhqo051g.apps.googleusercontent.com',
   SITE_NAME: 'Portafolio', TAGLINE: '',
-  ABOUT: '', ABOUT_PHOTO: '1JfAA1ZgYiCfbMqiaR6lOWAN2qJDmvoEf', ABOUT_PHOTO_POSITION: 'center 25%',
+  ABOUT: '', ABOUT_PHOTO: '', ABOUT_PHOTO_POSITION: 'center 25%',
   CONTACT_EMAIL: '', INSTAGRAM: '', WHATSAPP: '', LOCATION: '',
   MAX_SIDE: 2400,       // lado mayor (px) al que se reducen las fotos antes de subirlas
   JPEG_QUALITY: 0.86,
@@ -351,7 +353,7 @@ const CONFIG = Object.assign({
 const $ = (s, r) => (r || document).querySelector(s);
 const main = $('#main');
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
-const state = { tree: [], admin: null, view: { type: 'home' }, token: 0, routeKey: null };
+const state = { tree: [], profile: null, admin: null, view: { type: 'home' }, token: 0, routeKey: null };
 
 class ApiError extends Error {
   constructor(code, message) { super(message); this.code = code; }
@@ -521,7 +523,9 @@ function contactItems() {
 }
 
 const aboutParagraphs = () => String(CONFIG.ABOUT || '').split(/\n\s*\n/).map(t => t.trim()).filter(Boolean);
-const hasAbout = () => aboutParagraphs().length > 0 || !!CONFIG.ABOUT_PHOTO;
+/* La foto subida desde la página (Admin → Foto de perfil) manda sobre ABOUT_PHOTO de config.js. */
+const photoRef = () => state.profile || String(CONFIG.ABOUT_PHOTO || '').trim();
+const hasAbout = () => aboutParagraphs().length > 0 || !!photoRef();
 
 function aboutLabel() {
   if (hasAbout()) return 'Sobre mí';
@@ -541,9 +545,9 @@ function driveIdFrom(value) {
 /* Foto circular. ABOUT_PHOTO puede ser un archivo del repositorio ('fotoperfil.jpg'),
    una dirección completa (https://…) o un enlace / ID de un archivo de Drive. */
 function avatar(size, onFail) {
-  const v = String(CONFIG.ABOUT_PHOTO || '').trim();
+  const v = photoRef();
   if (!v) return null;
-  const id = driveIdFrom(v);
+  const id = state.profile ? state.profile : driveIdFrom(v); // el ID que entrega el servidor siempre es de Drive
   const wrap = el('div', { class: 'avatar' + (size ? ' ' + size : '') });
   const im = document.createElement('img');
   im.alt = 'Retrato de ' + CONFIG.SITE_NAME;
@@ -654,6 +658,7 @@ function route() {
   swr('tree', () => apiGet({ action: 'tree' }), (data, fresh) => {
     if (!guard()) return;
     state.tree = data.categories || [];
+    state.profile = data.profile || null;
     renderNav();
     renderFooterWork();
     if (view.type !== 'about') renderView(view, fresh, token);
@@ -824,7 +829,7 @@ function renderAbout() {
       el('a', { class: 'btn light', href: '#/' }, 'Volver al inicio')));
     return;
   }
-  const grid = el('div', { class: 'about' + (CONFIG.ABOUT_PHOTO ? '' : ' solo') });
+  const grid = el('div', { class: 'about' + (photoRef() ? '' : ' solo') });
   const av = avatar('lg', () => grid.classList.add('solo'));
   if (av) grid.append(av);
   const tx = el('div', { class: 'about-tx' }, el('p', { class: 'who', text: CONFIG.SITE_NAME }));
@@ -1073,7 +1078,8 @@ function updateAdminBar() {
   acts.replaceChildren();
   const b = (text, fn, solid) => el('button', { class: 'btn' + (solid ? ' solid' : ''), type: 'button', onclick: fn }, text);
   const v = state.view || { type: 'home' };
-  if (v.type === 'home') acts.append(b('Nueva categoría', newCategory, true));
+  if (v.type === 'home') acts.append(b('Foto de perfil', pickProfile), b('Nueva categoría', newCategory, true));
+  if (v.type === 'about') acts.append(b('Foto de perfil', pickProfile, true));
   if (v.type === 'cat') acts.append(b('Nueva carpeta', newFolder), b('Subir fotos', openUpload, true));
   if (v.type === 'album') acts.append(b('Subir fotos', openUpload, true));
 }
@@ -1164,6 +1170,29 @@ async function deletePhoto(id, folderId) {
   }
 }
 
+/* ───────── Administrador: foto de perfil ───────── */
+function pickProfile() {
+  if (!state.admin) { openLogin(); return; }
+  $('#profileInput').click();
+}
+
+async function uploadProfile(file) {
+  if (!file) return;
+  if (!ALLOWED.includes(file.type)) { toast('Elige una foto JPG, PNG o WebP.', 'error'); return; }
+  toast('Subiendo foto de perfil…');
+  try {
+    const blob = await prepareImage(file, 1200);
+    const data = await blobToBase64(blob);
+    await post({ action: 'setProfile', mime: 'image/jpeg', data }, 120000);
+    invalidate(['tree']);
+    toast('Foto de perfil actualizada.');
+    route();
+  } catch (e) {
+    toast(e.message, 'error');
+    if (e.code === 'AUTH') openLogin();
+  }
+}
+
 /* ───────── Administrador: subida de fotos ───────── */
 const up = { items: [], running: false, folderId: null, seq: 0 };
 
@@ -1218,7 +1247,7 @@ function outName(name) {
   return (String(name).replace(/\.[^.]+$/, '') || 'foto') + '.jpg';
 }
 
-async function prepareImage(file) {
+async function prepareImage(file, maxSide) {
   const url = URL.createObjectURL(file);
   try {
     const img = await new Promise((res, rej) => {
@@ -1227,7 +1256,7 @@ async function prepareImage(file) {
       i.onerror = () => rej(new Error('No se pudo leer la imagen.'));
       i.src = url;
     });
-    const scale = Math.min(1, CONFIG.MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+    const scale = Math.min(1, (maxSide || CONFIG.MAX_SIDE) / Math.max(img.naturalWidth, img.naturalHeight));
     const w = Math.max(1, Math.round(img.naturalWidth * scale));
     const h = Math.max(1, Math.round(img.naturalHeight * scale));
     const c = document.createElement('canvas');
@@ -1324,6 +1353,7 @@ function init() {
   $('#upGo').addEventListener('click', runUpload);
   $('#dlgUpload').addEventListener('cancel', e => { if (up.running) e.preventDefault(); });
   $('#fileInput').addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
+  $('#profileInput').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; uploadProfile(f); });
 
   const drop = $('#drop');
   ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
