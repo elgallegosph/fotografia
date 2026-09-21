@@ -276,6 +276,24 @@ body.hero-on .top:not(.solid):not(.menu-open) .nav a{color:rgba(239,238,233,.88)
 body.hero-on .top:not(.solid):not(.menu-open) .nav a:hover,body.hero-on .top:not(.solid):not(.menu-open) .nav a[aria-current]{color:#fff}
 body.hero-on .top:not(.solid):not(.menu-open) .nav a[aria-current]{border-bottom-color:#fff}
 
+/* Imágenes del sitio: fondo, logo y firma */
+#bg{position:fixed;top:0;left:0;width:100%;height:100vh;height:100lvh;z-index:-1;background:center/cover no-repeat;opacity:0;transition:opacity 1.2s ease;pointer-events:none}
+#bg.on{opacity:1}
+#bg::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(51,51,50,var(--bg-dim,.82))}
+body.has-bg .top{background:rgba(51,51,50,.72)}
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  body.has-bg .top{-webkit-backdrop-filter:blur(14px) saturate(115%);backdrop-filter:blur(14px) saturate(115%)}
+}
+body.has-bg .top.compact .nav{background:rgba(51,51,50,.97)}
+body.hero-on .top:not(.solid):not(.menu-open){-webkit-backdrop-filter:none;backdrop-filter:none}
+.brand.has-logo{display:flex;align-items:center;min-height:44px;padding:0}
+.brand-logo{display:block;height:34px;width:auto;max-width:min(220px,50vw);object-fit:contain}
+@media (min-width:1800px){.brand-logo{height:40px}}
+@media (max-height:520px){.brand-logo{height:28px}}
+.hero-mid{position:relative;flex:1 1 auto;min-height:0;padding-top:var(--cabecera);pointer-events:none}
+.hero-sign{position:absolute;left:50%;top:calc(50% + var(--cabecera) / 2);transform:translate(-50%,-50%);width:clamp(10rem,32vw,26rem);max-width:80%;max-height:calc(100% - var(--cabecera) - 8px);object-fit:contain;filter:drop-shadow(0 2px 16px rgba(20,20,19,.5));animation:sign 1.9s .5s cubic-bezier(.5,.1,.2,1) backwards}
+@keyframes sign{from{clip-path:inset(-40px 100% -40px -40px);opacity:0}12%{opacity:1}to{clip-path:inset(-40px -40px -40px -40px);opacity:1}}
+
 /* Efectos de entrada */
 main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
 .rv{opacity:0;transform:translate3d(0,22px,0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0ms)}
@@ -317,11 +335,13 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
   *,*::before,*::after{transition:none!important;animation:none!important}
   .lb.loading .lb-stage::after{border-top-color:rgba(239,238,233,.25)}
   .hero-media,.hero-in{transform:none!important}
+  #bg{transition:none}
   .dot[aria-current="true"]::after{width:calc(100% - 8px)}
 }
 </style>
 </head>
 <body>
+<div id="bg" aria-hidden="true"></div>
 <a class="skip" href="#main">Saltar al contenido</a>
 
 <header class="top">
@@ -430,10 +450,13 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
 'use strict';
 
 const CONFIG = Object.assign({
-  API_URL: 'https://script.google.com/macros/library/d/1M4K3cdiLNTQTF0Y28d0aeLbf_1vS-wx648PdKhQyfJ9LOZBgVt4Y2aAC/6', GOOGLE_CLIENT_ID: '422500526386-30n229h03ksvj068f9eom2edvhqo051g.apps.googleusercontent.com',
+  API_URL: 'https://script.google.com/macros/s/AKfycbyZDFd0fZcWbYR9buN_Lbzq6ApLi09s_LhumJe5X4zVE02pDhikAYh9NtiqahxPUU_FYA/exec', GOOGLE_CLIENT_ID: '422500526386-30n229h03ksvj068f9eom2edvhqo051g.apps.googleusercontent.com',
   SITE_NAME: 'Portafolio', TAGLINE: '',
   ABOUT: '', ABOUT_PHOTO: '', ABOUT_PHOTO_POSITION: 'center 25%',
   CONTACT_EMAIL: '', INSTAGRAM: '', WHATSAPP: '', LOCATION: '',
+  BACKGROUND_IMAGE: '', BACKGROUND_DIM: 0.82,
+  LOGO_IMAGE: '', LOGO_MODE: 'auto',
+  SIGNATURE_IMAGE: '', SIGNATURE_MODE: 'auto',
   MAX_SIDE: 2400,       // lado mayor (px) al que se reducen las fotos antes de subirlas
   JPEG_QUALITY: 0.86,
 }, window.PORTFOLIO_CONFIG || {});
@@ -441,7 +464,7 @@ const CONFIG = Object.assign({
 const $ = (s, r) => (r || document).querySelector(s);
 const main = $('#main');
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
-const state = { tree: [], profile: null, admin: null, view: { type: 'home' }, token: 0, routeKey: null, revealed: new Set() };
+const state = { tree: [], profile: null, assets: {}, admin: null, view: { type: 'home' }, token: 0, routeKey: null, revealed: new Set() };
 const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 class ApiError extends Error {
@@ -731,6 +754,143 @@ function renderFooterWork() {
   $('#fWork').replaceChildren(...list);
 }
 
+/* ───────── Imágenes del sitio: fondo, logo y firma ───────── */
+/* Salen de archivos llamados fondo, logo y firma en la carpeta Portafolio de Drive
+   (los detecta el script) o, si prefieres, de config.js (enlace de Drive o archivo de GitHub). */
+const ASSET_CONFIG = { fondo: 'BACKGROUND_IMAGE', logo: 'LOGO_IMAGE', firma: 'SIGNATURE_IMAGE' };
+
+function assetUrl(slot, w) {
+  const id = state.assets[slot] || driveIdFrom(CONFIG[ASSET_CONFIG[slot]]);
+  if (id) {
+    return w
+      ? { src: imgSrc(id, w), fb: imgFallback(id, w) }
+      : { src: 'https://lh3.googleusercontent.com/d/' + id, fb: 'https://drive.google.com/uc?export=view&id=' + id };
+  }
+  const ref = String(CONFIG[ASSET_CONFIG[slot]] || '').trim();
+  return ref ? { src: ref, fb: null } : null;
+}
+
+/* Vuelve blanca una firma o logo de tinta oscura (o le quita el fondo si es una imagen opaca),
+   para que se vea sobre fotos y fondos oscuros. Devuelve null si no hace falta cambiar nada. */
+function whitenInk(im, force) {
+  const k = Math.min(1, 1200 / Math.max(im.naturalWidth, im.naturalHeight));
+  const w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
+  const c = document.createElement('canvas');
+  c.width = w; c.height = h;
+  const x = c.getContext('2d', { willReadFrequently: true });
+  x.drawImage(im, 0, 0, w, h);
+  const data = x.getImageData(0, 0, w, h);   // lanza un error si la imagen no permite leer sus píxeles
+  const a = data.data;
+  const luma = i => (0.2126 * a[i] + 0.7152 * a[i + 1] + 0.0722 * a[i + 2]) / 255;
+  let minA = 255, sumL = 0, sumW = 0;
+  for (let i = 0; i < a.length; i += 4) {
+    const al = a[i + 3];
+    if (al < minA) minA = al;
+    if (al > 10) { sumL += luma(i) * al; sumW += al; }
+  }
+  if (!sumW) return null;
+  let changed = false;
+  if (minA < 250) {                                  // con transparencia: la tinta es lo opaco
+    if (force || sumL / sumW < 0.55) {
+      for (let i = 0; i < a.length; i += 4) { a[i] = a[i + 1] = a[i + 2] = 255; }
+      changed = true;
+    }
+  } else {                                           // opaca: el fondo se estima con el borde
+    let e = 0, n = 0;
+    const edge = (px, py) => { e += luma((py * w + px) * 4); n++; };
+    for (let px = 0; px < w; px += 3) { edge(px, 0); edge(px, h - 1); }
+    for (let py = 0; py < h; py += 3) { edge(0, py); edge(w - 1, py); }
+    const bg = e / n;
+    if (bg > 0.7) {                                  // tinta oscura sobre fondo claro
+      for (let i = 0; i < a.length; i += 4) {
+        const al = Math.max(0, Math.min(1, ((bg - luma(i)) / bg) * 1.8));
+        a[i] = a[i + 1] = a[i + 2] = 255;
+        a[i + 3] = Math.round(al * 255);
+      }
+      changed = true;
+    } else if (bg < 0.3 && !force) {                 // tinta clara sobre fondo oscuro
+      for (let i = 0; i < a.length; i += 4) {
+        a[i + 3] = Math.round(Math.max(0, Math.min(1, ((luma(i) - bg) / (1 - bg)) * 1.8)) * 255);
+      }
+      changed = true;
+    }
+  }
+  if (!changed) return null;
+  x.putImageData(data, 0, 0);
+  return c.toDataURL('image/png');
+}
+
+const inkCache = new Map();
+/* Carga logo o firma. Intenta con permiso CORS (para poder analizar los colores); si no se puede, la muestra tal cual. */
+function loadInk(slot, mode) {
+  const u = assetUrl(slot, 0);
+  if (!u) return Promise.reject(new Error('sin imagen'));
+  const key = u.src + '|' + mode;
+  if (inkCache.has(key)) return inkCache.get(key);
+  const p = new Promise((resolve, reject) => {
+    const tryLoad = (url, cors, next) => {
+      const im = new Image();
+      if (cors) im.crossOrigin = 'anonymous';
+      im.onload = () => resolve({ im, cors, url });
+      im.onerror = next;
+      im.src = url;
+    };
+    const fail = () => reject(new Error('no se pudo cargar'));
+    tryLoad(u.src, true, () => tryLoad(u.src, false, () => (u.fb ? tryLoad(u.fb, false, fail) : fail())));
+  }).then(({ im, cors, url }) => {
+    if (mode === 'original' || !cors) return url;
+    try { return whitenInk(im, mode === 'blanco') || url; } catch (e) { return url; }
+  });
+  inkCache.set(key, p);
+  p.catch(() => inkCache.delete(key));
+  return p;
+}
+
+function applyBackground() {
+  const bg = $('#bg');
+  const u = assetUrl('fondo', heroSize());
+  const key = u ? u.src : '';
+  if (bg.dataset.src === key) return;
+  bg.dataset.src = key;
+  bg.classList.remove('on');
+  document.body.classList.remove('has-bg');
+  if (!u) return;
+  const im = new Image();
+  let fb = false;
+  im.onload = () => {
+    if (bg.dataset.src !== key) return;
+    bg.style.backgroundImage = 'url("' + im.src + '")';
+    bg.classList.add('on');
+    document.body.classList.add('has-bg');
+  };
+  im.onerror = () => { if (!fb && u.fb) { fb = true; im.src = u.fb; } };
+  im.src = u.src;
+}
+
+function applyLogo() {
+  const brand = $('#brand');
+  const u = assetUrl('logo', 0);
+  const key = u ? u.src : '';
+  if (brand.dataset.logo === key) return;
+  brand.dataset.logo = key;
+  brand.classList.remove('has-logo');
+  brand.replaceChildren(document.createTextNode(CONFIG.SITE_NAME));
+  fitNav();
+  if (!u) return;
+  loadInk('logo', CONFIG.LOGO_MODE || 'auto').then(src => {
+    if (brand.dataset.logo !== key) return;
+    brand.replaceChildren(
+      el('img', { class: 'brand-logo', src, alt: '', decoding: 'async' }),
+      el('span', { class: 'sr', text: CONFIG.SITE_NAME + ' — inicio' }));
+    brand.classList.add('has-logo');
+    fitNav();
+  }).catch(() => { /* si no carga, queda el nombre en texto */ });
+}
+
+function applyAssets() {
+  applyBackground();
+  applyLogo();
+}
 /* ───────── Efectos: revelado al desplazarse y portada ───────── */
 let revealIO = null;
 /* Los elementos con data-rv aparecen suavemente al entrar en pantalla (una vez por página). */
@@ -830,6 +990,7 @@ function buildHero() {
   hs.dots = items.map((c, i) => el('button', { class: 'dot', type: 'button', 'aria-label': 'Ver ' + c.title, onclick: () => heroGo(i, true) }));
   hs.cap = el('a', { class: 'hero-cap' });
   const label = aboutLabel();
+  const mid = el('div', { class: 'hero-mid' });
   const goWork = () => {
     const t = document.getElementById('work');
     if (t) t.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
@@ -841,10 +1002,17 @@ function buildHero() {
   const hero = el('section', { class: 'hero', 'aria-label': 'Presentación' },
     el('div', { class: 'hero-media', 'aria-hidden': 'true' }, hs.slides),
     el('div', { class: 'hero-in' },
+      mid,
       el('h1', { text: CONFIG.TAGLINE || CONFIG.SITE_NAME }),
       el('div', { class: 'hero-foot' }, actions, meta)));
   hs.el = hero;
   heroGo(0, false);
+  if (assetUrl('firma', 0)) {
+    loadInk('firma', CONFIG.SIGNATURE_MODE || 'auto').then(src => {
+      if (hs.el !== hero) return; // la portada ya se reemplazó
+      mid.append(el('img', { class: 'hero-sign', src, alt: 'Firma de ' + CONFIG.SITE_NAME, decoding: 'async' }));
+    }).catch(() => { /* sin firma, la portada queda igual */ });
+  }
   return hero;
 }
 
@@ -908,6 +1076,8 @@ function route() {
     if (!guard()) return;
     state.tree = data.categories || [];
     state.profile = data.profile || null;
+    state.assets = data.assets || {};
+    applyAssets();
     renderNav();
     renderFooterWork();
     if (view.type !== 'about') renderView(view, fresh, token);
@@ -1631,6 +1801,17 @@ function init() {
   $('#brand').textContent = CONFIG.SITE_NAME;
   renderFooter();
   renderNav();
+  const dim = Number(CONFIG.BACKGROUND_DIM);
+  if (isFinite(dim)) document.documentElement.style.setProperty('--bg-dim', String(Math.min(1, Math.max(0, dim))));
+  applyAssets();
+  $('#brand').addEventListener('click', e => {
+    const h = location.hash;
+    if (h === '' || h === '#' || h === '#/') { // ya estás en el inicio: sube suavemente
+      e.preventDefault();
+      closeMenu();
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+  });
   restoreAdmin();
 
   $('#menuBtn').addEventListener('click', () => {
