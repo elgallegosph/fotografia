@@ -29,7 +29,7 @@ window.PORTFOLIO_CONFIG = {
   //   1) Un archivo subido a este repositorio, junto a index.html. Ej: 'fotoperfil.jpg'
   //   2) Una dirección completa. Ej: 'https://…/foto.jpg'
   //   3) El ID de un archivo de Drive (la página lo reduce sola, ideal si la foto pesa mucho)
-  ABOUT_PHOTO: '1JfAA1ZgYiCfbMqiaR6lOWAN2qJDmvoEf',
+  ABOUT_PHOTO: '',
   // Hacia dónde se centra el recorte del círculo. Si te cortan la frente: 'center 15%'; si te cortan la barbilla: 'center 40%'
   ABOUT_PHOTO_POSITION: 'center 25%',
 
