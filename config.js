@@ -36,6 +36,6 @@ window.PORTFOLIO_CONFIG = {
   /* ── Contacto (opcional; deja vacío lo que no quieras mostrar) ────── */
   CONTACT_EMAIL: '',
   INSTAGRAM: 'https://www.instagram.com/_soy_mateo_',
-  WHATSAPP: '',           // Con código de país, solo números. Ej: '573001234567'
-  LOCATION: '',           // Ej: 'Manizales, Colombia'
+  WHATSAPP: '573218870891',           // Con código de país, solo números. Ej: '573001234567'
+  LOCATION: 'SAN JOSE, CALDAS',           // Ej: 'Manizales, Colombia'
 };
