@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Portafolio de fotografía</title>
-<meta name="description" content="Portafolio de fotografía: retrato, calle, paisaje y editorial.">
+<meta name="description" content="Portafolio de fotografía.">
 <meta name="theme-color" content="#333332">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23333332'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23efeee9' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,10 +12,11 @@
 <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wdth,wght@75..100,200..800&family=Newsreader:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
 <style>
-/* ───────── Diseño ─────────
-   Fondo gris medio (como la tarjeta gris del fotógrafo) para que el color de las fotos se vea fiel.
-   Nombres de categoría en tipografía condensada y ligera, a gran tamaño. Sin acentos de color:
-   el color lo ponen las fotos. */
+/* ───────── Sistema de diseño ─────────
+   Base: gris medio neutro, para que el color de las fotos se vea fiel.
+   Tipografía: Bricolage Grotesque (títulos condensados y ligeros; resto en ancho normal)
+   y Newsreader cursiva solo para datos secundarios (contadores).
+   Estructura: contenedor de 1360 px, escala de espacio de 8 px, filetes finos para separar secciones. */
 :root{
   --gris-12:#2a2a29;
   --gris-18:#333332;
@@ -24,12 +25,16 @@
   --humo:#a8a7a1;
   --tinta:#1d1d1c;
   --error:#a3261c;
+  --linea:rgba(239,238,233,.16);
   --display:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
   --serif:'Newsreader',Georgia,'Times New Roman',serif;
-  --pad:clamp(16px,4vw,48px);
+  --pad:clamp(16px,4vw,40px);
+  --max:1360px;
+  --seccion:clamp(48px,7vw,96px);
+  --cabecera:64px;
 }
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:auto}
+html{-webkit-text-size-adjust:100%}
 body{margin:0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--gris-18);color:var(--marfil);font-family:var(--display);font-size:1rem;line-height:1.5}
 body.lb-open{overflow:hidden}
 body.has-admin{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
@@ -43,75 +48,113 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .skip{position:absolute;left:-9999px;top:8px;z-index:100;background:var(--marfil);color:var(--tinta);padding:.6em 1em}
 .skip:focus{left:8px}
+.page{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
 
-/* Cabecera y pie */
-.top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:20px var(--pad) 16px}
-.brand{font-weight:600;font-size:1.125rem;text-decoration:none}
-.top .mail{color:var(--humo);text-decoration:none;font-size:.95rem}
-.top .mail:hover{color:var(--marfil)}
-.foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 20px;padding:56px var(--pad) 28px;color:var(--humo);font-size:.9rem}
-.foot a{text-decoration:none}
-.foot a:hover{color:var(--marfil)}
-.foot .links{display:flex;gap:20px;align-items:center}
-.linklike{background:none;border:0;color:inherit;cursor:pointer;padding:.7em 0;text-decoration:underline;text-underline-offset:3px}
-.linklike:hover{color:var(--marfil)}
+/* Cabecera fija con menú */
+.top{position:sticky;top:0;z-index:30;background:var(--gris-18);border-bottom:1px solid var(--linea)}
+.top-in{max-width:var(--max);margin:0 auto;padding:0 var(--pad);height:var(--cabecera);display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{font-weight:600;font-size:.9rem;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
+.nav{display:flex;align-items:center;gap:28px}
+.nav a{padding:8px 0;border-bottom:1.5px solid transparent;color:var(--humo);font-size:.95rem;text-decoration:none}
+.nav a:hover{color:var(--marfil)}
+.nav a[aria-current]{color:var(--marfil);border-bottom-color:var(--marfil)}
+.menu-btn{display:none;min-height:44px;padding:0 4px;border:0;background:none;color:inherit;font-weight:500;cursor:pointer}
+@media (max-width:820px){
+  .menu-btn{display:inline-flex;align-items:center}
+  .nav{position:absolute;left:0;right:0;top:100%;display:none;flex-direction:column;align-items:stretch;gap:0;padding:4px var(--pad) 12px;background:var(--gris-18);border-bottom:1px solid var(--linea)}
+  .nav.is-open{display:flex}
+  .nav a{padding:14px 0;border-bottom:1px solid var(--linea);font-size:1.05rem}
+  .nav a:last-child{border-bottom:0}
+  .nav a[aria-current]{border-bottom-color:var(--linea);font-weight:600}
+}
 
-/* Inicio: una franja por categoría */
-.bands{display:grid;gap:2px}
-.band{position:relative;display:flex;align-items:flex-end;height:clamp(220px,46vh,520px);padding:0 var(--pad) 18px;overflow:hidden;background:var(--gris-12);text-decoration:none}
-.band img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s,transform 1s cubic-bezier(.2,.7,.2,1)}
-.band img.ok{opacity:1}
-.band img.broken{display:none}
-.band::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(20,20,19,.62),rgba(20,20,19,0) 62%)}
-.band h2{position:relative;z-index:1;margin:0;font-size:clamp(64px,15vw,220px);font-weight:300;font-stretch:75%;line-height:.86;letter-spacing:-.025em;overflow-wrap:break-word}
-@media (hover:hover){.band:hover img.ok{transform:scale(1.025)}}
-
-/* Categoría y carpeta */
-.crumbs{padding:8px var(--pad) 0;color:var(--humo);font-size:.95rem}
+/* Cabecera de página (migas + título) */
+.page-head{padding:24px 0}
+.crumbs{color:var(--humo);font-size:.9rem}
 .crumbs a{text-underline-offset:3px}
 .crumbs a:hover{color:var(--marfil)}
 .crumbs .sep{margin:0 .5em}
 .crumbs [aria-current]{color:var(--marfil)}
-.title{margin:.15em 0 .3em;padding:0 var(--pad);font-size:clamp(64px,15vw,220px);font-weight:300;font-stretch:75%;line-height:.86;letter-spacing:-.025em;overflow-wrap:break-word}
-.subhead{margin:0 0 16px;padding:0 var(--pad);font-size:1.25rem;font-weight:500}
-.count{margin:0 0 20px;padding:0 var(--pad);font-family:var(--serif);font-style:italic;color:var(--humo)}
+.title{margin:.3em 0 .1em;font-size:clamp(2.5rem,7vw,5rem);font-weight:300;font-stretch:75%;line-height:1;letter-spacing:-.02em;overflow-wrap:break-word}
+.count{margin:-8px 0 24px;font-family:var(--serif);font-style:italic;color:var(--humo)}
 
-.albums{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:22px 10px;padding:0 var(--pad);margin-bottom:56px}
-.album{display:block;text-decoration:none}
-.album .ph{aspect-ratio:4/5;background:var(--gris-12);overflow:hidden}
-.album img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s,transform .7s cubic-bezier(.2,.7,.2,1)}
-.album img.ok{opacity:1}
-.album img.broken{display:none}
-.album .nm{display:block;margin-top:10px;font-size:1.125rem;font-weight:500;line-height:1.25}
-@media (hover:hover){.album:hover img.ok{transform:scale(1.03)}}
+/* Inicio */
+.intro{padding:clamp(40px,8vw,96px) 0 clamp(32px,5vw,64px)}
+.lead{margin:0;max-width:26em;font-size:clamp(2rem,5.2vw,4rem);font-weight:300;font-stretch:75%;line-height:1.05;letter-spacing:-.02em}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:0 0 24px;padding-bottom:12px;border-bottom:1px solid var(--linea)}
+.sec-head h2{margin:0;font-size:1.25rem;font-weight:600}
 
-.wall{column-width:150px;column-gap:10px;padding:0 var(--pad)}
-.tile{position:relative;break-inside:avoid;margin:0 0 10px}
+/* Cuadrícula uniforme (categorías y carpetas) */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:28px 16px}
+.card{display:block;text-decoration:none}
+.card .ph{aspect-ratio:4/5;background:var(--gris-12);overflow:hidden}
+.card img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s,transform .7s cubic-bezier(.2,.7,.2,1)}
+.card img.ok{opacity:1}
+.card img.broken{display:none}
+.card .nm{display:block;margin-top:12px;font-size:1.0625rem;font-weight:500;line-height:1.3;text-underline-offset:4px}
+.card:hover .nm{text-decoration:underline}
+@media (hover:hover){.card:hover img.ok{transform:scale(1.03)}}
+@media (min-width:700px){.cards{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:40px 24px}}
+
+/* Galería de fotos */
+.sec-head.subhead{margin-top:var(--seccion)}
+.wall{column-width:150px;column-gap:12px}
+.tile{position:relative;break-inside:avoid;margin:0 0 12px}
 .open{display:block;width:100%;padding:0;border:0;background:var(--gris-12);cursor:zoom-in;aspect-ratio:3/4;overflow:hidden}
 .open img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}
 .open img.ok{opacity:1}
 .open img.broken{display:none}
 .del{position:absolute;top:8px;right:8px;width:40px;height:40px;border:0;border-radius:50%;background:var(--marfil);color:var(--tinta);font-size:22px;line-height:1;cursor:pointer}
 .del:hover{background:#fff}
-@media (min-width:700px){
-  .albums{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px 14px}
-  .wall{column-width:240px;column-gap:14px}
-  .tile{margin-bottom:14px}
+@media (min-width:700px){.wall{column-width:260px;column-gap:16px}.tile{margin-bottom:16px}}
+
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:var(--seccion);padding-top:20px;border-top:1px solid var(--linea)}
+.pager a{display:block;font-weight:500;text-decoration:none}
+.pager a:hover{text-decoration:underline;text-underline-offset:4px}
+.pager .lbl{display:block;color:var(--humo);font-size:.85rem;font-weight:400}
+.pager .next{margin-left:auto;text-align:right}
+
+/* Sobre mí */
+.about{display:grid;gap:32px;align-items:start;padding-top:16px}
+.about-ph{aspect-ratio:4/5;background:var(--gris-12);overflow:hidden}
+.about-ph img{display:block;width:100%;height:100%;object-fit:cover}
+.about-tx p{max-width:60ch;margin:0 0 1em;font-size:1.0625rem;line-height:1.65}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:10px 28px;max-width:60ch;margin:32px 0 0;padding-top:20px;border-top:1px solid var(--linea)}
+.facts dt{color:var(--humo)}
+.facts dd{margin:0;overflow-wrap:anywhere}
+.facts a{text-underline-offset:3px}
+@media (min-width:800px){
+  .about{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:64px}
+  .about.solo{grid-template-columns:minmax(0,1fr);max-width:48rem}
 }
 
 /* Estados vacíos y de carga */
-.empty{max-width:46rem;padding:12vh var(--pad)}
-.empty h2{margin:0 0 .3em;font-size:clamp(32px,7vw,64px);font-weight:300;font-stretch:75%;line-height:1;letter-spacing:-.02em}
+.empty{max-width:46rem;padding:clamp(40px,10vh,96px) 0}
+.empty h2{margin:0 0 .3em;font-size:clamp(2rem,6vw,3.5rem);font-weight:300;font-stretch:75%;line-height:1;letter-spacing:-.02em}
 .empty p{margin:0 0 1.2em;color:var(--humo);max-width:36rem}
-.sk{height:clamp(220px,46vh,520px);background:linear-gradient(90deg,var(--gris-12),var(--gris-25),var(--gris-12));background-size:200% 100%;animation:sh 1.6s linear infinite}
-.sk-title{height:clamp(56px,13vw,180px);margin:16px var(--pad) 28px;max-width:60%}
-.sk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 var(--pad)}
-.sk-grid .sk{height:auto;aspect-ratio:3/4}
-@media (min-width:700px){.sk-grid{grid-template-columns:repeat(4,1fr);gap:14px}}
+.sk{background:linear-gradient(90deg,var(--gris-12),var(--gris-25),var(--gris-12));background-size:200% 100%;animation:sh 1.6s linear infinite}
+.sk-lead{height:clamp(56px,10vw,120px);max-width:60%;margin:clamp(40px,8vw,96px) 0 clamp(32px,5vw,64px)}
+.sk-title{height:clamp(48px,8vw,80px);max-width:40%;margin:56px 0 32px}
+.sk-card{aspect-ratio:4/5}
 @keyframes sh{to{background-position:-200% 0}}
 
+/* Pie */
+.foot{margin-top:var(--seccion);border-top:1px solid var(--linea);color:var(--humo);font-size:.925rem}
+.foot-in{max-width:var(--max);margin:0 auto;padding:40px var(--pad) 24px}
+.foot-grid{display:grid;gap:32px;grid-template-columns:1fr}
+.foot h2{margin:0 0 12px;font-size:.9rem;font-weight:600;color:var(--marfil)}
+.foot ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.foot li a,.foot li .plain{display:inline-block;padding:4px 0;text-decoration:none}
+.foot li a:hover,.foot-base a:hover{color:var(--marfil);text-decoration:underline;text-underline-offset:3px}
+.foot .wm{margin:0 0 8px;color:var(--marfil);font-weight:600;font-size:.9rem;letter-spacing:.14em;text-transform:uppercase}
+.foot .tag{margin:0;max-width:28rem}
+.foot-base{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 16px;margin-top:32px;padding-top:16px;border-top:1px solid var(--linea);font-size:.85rem}
+.linklike{background:none;border:0;color:inherit;cursor:pointer;padding:.7em 0;text-decoration:underline;text-underline-offset:3px}
+.linklike:hover{color:var(--marfil)}
+@media (min-width:700px){.foot-grid{grid-template-columns:2fr 1fr 1fr}}
+
 /* Botones */
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.55em 1.1em;border:1.5px solid currentColor;border-radius:2px;background:transparent;color:inherit;font-weight:600;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.55em 1.1em;border:1.5px solid currentColor;border-radius:2px;background:transparent;color:inherit;font-weight:600;cursor:pointer;text-decoration:none}
 .btn.solid{background:var(--tinta);border-color:var(--tinta);color:var(--marfil)}
 .btn.light{background:var(--marfil);border-color:var(--marfil);color:var(--tinta)}
 .btn:disabled{opacity:.5;cursor:default}
@@ -178,20 +221,32 @@ body.has-admin #toast{bottom:calc(88px + env(safe-area-inset-bottom))}
 <a class="skip" href="#main">Saltar al contenido</a>
 
 <header class="top">
-  <a class="brand" id="brand" href="#/">Portafolio</a>
-  <a class="mail" id="mail" href="#" hidden>Escríbeme</a>
+  <div class="top-in">
+    <a class="brand" id="brand" href="#/">Portafolio</a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="nav">Menú</button>
+    <nav class="nav" id="nav" aria-label="Principal"></nav>
+  </div>
 </header>
 
 <main id="main" tabindex="-1">
-  <noscript><div class="empty"><h2>Se necesita JavaScript</h2><p>Activa JavaScript en tu navegador para ver el portafolio.</p></div></noscript>
+  <noscript><div class="page"><div class="empty"><h2>Se necesita JavaScript</h2><p>Activa JavaScript en tu navegador para ver el portafolio.</p></div></div></noscript>
 </main>
 
 <footer class="foot">
-  <span id="copy"></span>
-  <span class="links">
-    <a id="insta" href="#" target="_blank" rel="noopener" hidden>Instagram</a>
-    <button class="linklike" id="adminLink" type="button">Admin</button>
-  </span>
+  <div class="foot-in">
+    <div class="foot-grid">
+      <div>
+        <p class="wm" id="fBrand"></p>
+        <p class="tag" id="fTag"></p>
+      </div>
+      <nav id="fWorkCol" aria-label="Trabajo" hidden><h2>Trabajo</h2><ul id="fWork"></ul></nav>
+      <div id="fContactCol" hidden><h2>Contacto</h2><ul id="fContact"></ul></div>
+    </div>
+    <div class="foot-base">
+      <span id="copy"></span>
+      <button class="linklike" id="adminLink" type="button">Admin</button>
+    </div>
+  </div>
 </footer>
 
 <div class="admin-bar" id="adminBar" hidden>
@@ -263,20 +318,19 @@ body.has-admin #toast{bottom:calc(88px + env(safe-area-inset-bottom))}
 
 <div id="toast" popover="manual" role="status" aria-live="polite"></div>
 
+<!-- Tus datos personales viven en config.js -->
+<script src="config.js"></script>
 <script>
 'use strict';
 
-/* ═══════════════ CONFIGURACIÓN — es lo único que tienes que editar ═══════════════ */
-const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycby5npuEV0z37ucUtgW8zKVcWluXSkHWEeF4arWbjNSwuucdRz8NanYL5RaHQMnyF3T0oA/exec',            // URL de la aplicación web de Apps Script (termina en /exec)
-  GOOGLE_CLIENT_ID: '422500526386-30n229h03ksvj068f9eom2edvhqo051g.apps.googleusercontent.com',   // ID de cliente de Google (termina en .apps.googleusercontent.com)
-  SITE_NAME: 'MATEO GALLEGO', // Aparece arriba a la izquierda y en el título de la pestaña
-  CONTACT_EMAIL: '',      // Opcional. Muestra el enlace "Escríbeme"
-  INSTAGRAM: 'https://www.instagram.com/_soy_mateo_?stkn=MmU1dHd0ZzE4cnFl&utm_source=qr',          // Opcional. Ej: 'https://instagram.com/tuusuario'
-  MAX_SIDE: 2400,         // Lado mayor (px) al que se reducen las fotos antes de subirlas
+const CONFIG = Object.assign({
+  API_URL: '', GOOGLE_CLIENT_ID: '',
+  SITE_NAME: 'Portafolio', TAGLINE: '',
+  ABOUT: '', ABOUT_PHOTO: '',
+  CONTACT_EMAIL: '', INSTAGRAM: '', WHATSAPP: '', LOCATION: '',
+  MAX_SIDE: 2400,       // lado mayor (px) al que se reducen las fotos antes de subirlas
   JPEG_QUALITY: 0.86,
-};
-/* ═════════════════════════════════════════════════════════════════════════════════ */
+}, window.PORTFOLIO_CONFIG || {});
 
 const $ = (s, r) => (r || document).querySelector(s);
 const main = $('#main');
@@ -312,7 +366,7 @@ function toast(msg, kind) {
   // popover = capa superior: el aviso se ve incluso encima de las ventanas emergentes
   try {
     if (t.showPopover) {
-      if (t.matches(':popover-open')) t.hidePopover(); // se vuelve a abrir para quedar por encima de lo último que se abrió
+      if (t.matches(':popover-open')) t.hidePopover(); // se reabre para quedar por encima de lo último que se abrió
       t.showPopover();
     }
   } catch (e) { /* navegador antiguo */ }
@@ -427,6 +481,83 @@ function invalidate(keys) {
   keys.forEach(k => { try { localStorage.removeItem('pf:' + k); } catch (e) { /* nada */ } });
 }
 
+/* ───────── Contacto y "Sobre mí" ───────── */
+function instagram() {
+  const v = String(CONFIG.INSTAGRAM || '').trim();
+  if (!v) return null;
+  if (/^https?:\/\//i.test(v)) {
+    const h = v.replace(/[?#].*$/, '').replace(/\/+$/, '').split('/').pop().replace(/^@/, '');
+    return { href: v, text: h ? '@' + h : 'Instagram' };
+  }
+  const h = v.replace(/^@/, '');
+  return { href: 'https://instagram.com/' + h, text: '@' + h };
+}
+
+function contactItems() {
+  const items = [];
+  if (CONFIG.CONTACT_EMAIL) items.push({ label: 'Correo', text: CONFIG.CONTACT_EMAIL, href: 'mailto:' + CONFIG.CONTACT_EMAIL });
+  const ig = instagram();
+  if (ig) items.push({ label: 'Instagram', text: ig.text, href: ig.href, ext: true });
+  const wa = String(CONFIG.WHATSAPP || '').replace(/\D/g, '');
+  if (wa) items.push({ label: 'WhatsApp', text: '+' + wa, href: 'https://wa.me/' + wa, ext: true });
+  if (CONFIG.LOCATION) items.push({ label: 'Ubicación', text: CONFIG.LOCATION });
+  return items;
+}
+
+const aboutParagraphs = () => String(CONFIG.ABOUT || '').split(/\n\s*\n/).map(t => t.trim()).filter(Boolean);
+const hasAbout = () => aboutParagraphs().length > 0 || !!CONFIG.ABOUT_PHOTO;
+
+function aboutLabel() {
+  if (hasAbout()) return 'Sobre mí';
+  return contactItems().length ? 'Contacto' : null;
+}
+
+function linkFor(item, cls) {
+  return el('a', { href: item.href, class: cls, target: item.ext ? '_blank' : null, rel: item.ext ? 'noopener' : null, text: item.text });
+}
+
+/* ───────── Cabecera y pie ───────── */
+function renderNav() {
+  const nav = $('#nav');
+  nav.replaceChildren();
+  state.tree.forEach(c => nav.append(el('a', { href: '#/c/' + c.id, 'data-k': 'c:' + c.id, text: c.title })));
+  const label = aboutLabel();
+  if (label) nav.append(el('a', { href: '#/sobre-mi', 'data-k': 'about', text: label }));
+  updateNav();
+}
+
+function updateNav() {
+  const v = state.view || {};
+  document.querySelectorAll('#nav a').forEach(a => {
+    const on = (v.type === 'about' && a.dataset.k === 'about') ||
+      ((v.type === 'cat' || v.type === 'album') && a.dataset.k === 'c:' + v.catId);
+    if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+  });
+}
+
+function closeMenu() {
+  $('#nav').classList.remove('is-open');
+  const b = $('#menuBtn');
+  b.setAttribute('aria-expanded', 'false');
+  b.textContent = 'Menú';
+}
+
+function renderFooter() {
+  $('#fBrand').textContent = CONFIG.SITE_NAME;
+  $('#fTag').textContent = CONFIG.TAGLINE || '';
+  $('#copy').textContent = `© ${new Date().getFullYear()} ${CONFIG.SITE_NAME}. Todos los derechos reservados.`;
+  const items = contactItems();
+  $('#fContactCol').hidden = !items.length;
+  $('#fContact').replaceChildren(...items.map(it => el('li', {}, it.href ? linkFor(it) : el('span', { class: 'plain', text: it.text }))));
+  renderFooterWork();
+}
+
+function renderFooterWork() {
+  const list = state.tree.map(c => el('li', {}, el('a', { href: '#/c/' + c.id, text: c.title })));
+  $('#fWorkCol').hidden = !list.length;
+  $('#fWork').replaceChildren(...list);
+}
+
 /* ───────── Rutas ───────── */
 function route() {
   const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
@@ -435,24 +566,32 @@ function route() {
   if (key !== state.routeKey) window.scrollTo(0, 0);
   state.routeKey = key;
 
-  const view = (parts[0] === 'c' && parts[1])
-    ? { type: parts[2] ? 'album' : 'cat', catId: parts[1], albumId: parts[2] }
-    : { type: 'home' };
+  let view;
+  if (parts[0] === 'c' && parts[1]) view = { type: parts[2] ? 'album' : 'cat', catId: parts[1], albumId: parts[2] };
+  else if (parts[0] === 'sobre-mi') view = { type: 'about' };
+  else view = { type: 'home' };
   state.view = view;
+  closeMenu();
+  updateNav();
   updateAdminBar();
 
-  if (!CONFIG.API_URL) { renderSetup(); return; }
-  showSkeleton(view);
+  if (!CONFIG.API_URL) {
+    if (view.type === 'about') renderAbout(); else renderSetup();
+    return;
+  }
+  if (view.type === 'about') renderAbout(); else showSkeleton(view);
   const guard = () => token === state.token;
 
   swr('tree', () => apiGet({ action: 'tree' }), (data, fresh) => {
     if (!guard()) return;
     state.tree = data.categories || [];
-    renderView(view, fresh, token);
+    renderNav();
+    renderFooterWork();
+    if (view.type !== 'about') renderView(view, fresh, token);
   }, () => {
     // El servidor confirmó que no hay cambios: si el enlace no existe, avisamos.
-    if (guard() && !resolveView(view)) renderNotFound();
-  }).catch(err => { if (guard()) renderError(err); });
+    if (guard() && view.type !== 'about' && !resolveView(view)) renderNotFound();
+  }).catch(err => { if (guard() && view.type !== 'about') renderError(err); });
 }
 
 function resolveView(view) {
@@ -477,16 +616,10 @@ function renderView(view, fresh, token) {
 
 function showSkeleton(view) {
   const w = el('div', { class: 'page', 'aria-busy': 'true' });
-  if (view.type === 'home') {
-    const b = el('div', { class: 'bands' });
-    for (let i = 0; i < 3; i++) b.append(el('div', { class: 'sk' }));
-    w.append(b);
-  } else {
-    w.append(el('div', { class: 'sk sk-title' }));
-    const g = el('div', { class: 'sk-grid' });
-    for (let i = 0; i < 8; i++) g.append(el('div', { class: 'sk' }));
-    w.append(g);
-  }
+  w.append(el('div', { class: 'sk ' + (view.type === 'home' ? 'sk-lead' : 'sk-title') }));
+  const g = el('div', { class: 'cards' });
+  for (let i = 0; i < (view.type === 'home' ? 4 : 8); i++) g.append(el('div', { class: 'sk sk-card' }));
+  w.append(g);
   main.replaceChildren(w);
 }
 
@@ -497,16 +630,20 @@ function emptyState(title, text, action) {
     action || null);
 }
 
+function showPage(...kids) {
+  main.replaceChildren(el('div', { class: 'page' }, ...kids));
+}
+
 function renderSetup() {
   document.title = CONFIG.SITE_NAME;
-  main.replaceChildren(emptyState(
+  showPage(emptyState(
     'Falta conectar con Drive',
-    'Abre index.html, busca la sección CONFIG y pega en API_URL la dirección de tu aplicación de Apps Script.'
+    'Abre el archivo config.js y pega en API_URL la dirección de tu aplicación de Apps Script.'
   ));
 }
 
 function renderError(err) {
-  main.replaceChildren(emptyState(
+  showPage(emptyState(
     'No se pudo cargar',
     (err && err.message) || 'Ocurrió un error inesperado.',
     el('button', { class: 'btn light', type: 'button', onclick: () => route() }, 'Reintentar')
@@ -515,35 +652,14 @@ function renderError(err) {
 
 function renderNotFound() {
   document.title = CONFIG.SITE_NAME;
-  main.replaceChildren(emptyState(
+  showPage(emptyState(
     'No encontramos esa página',
     'Puede que la carpeta se haya cambiado de nombre o eliminado.',
     el('a', { class: 'btn light', href: '#/' }, 'Volver al inicio')
   ));
 }
 
-function renderHome() {
-  document.title = CONFIG.SITE_NAME;
-  const wrap = el('div', { class: 'page' }, el('h1', { class: 'sr', text: CONFIG.SITE_NAME }));
-  if (!state.tree.length) {
-    wrap.append(emptyState(
-      'Aún no hay fotografías',
-      state.admin ? 'Crea la primera categoría con el botón de abajo.' : 'Vuelve pronto.'
-    ));
-  } else {
-    const bands = el('div', { class: 'bands' });
-    state.tree.forEach((c, i) => {
-      const a = el('a', { class: 'band', href: '#/c/' + c.id });
-      if (c.cover) a.append(makeImg(c.cover, 1600, '', { lazy: i > 0 }));
-      a.append(el('h2', { text: c.title }));
-      bands.append(a);
-    });
-    wrap.append(bands);
-  }
-  main.replaceChildren(wrap);
-  updateAdminBar();
-}
-
+/* ───────── Vistas ───────── */
 function crumbs(items) {
   const nav = el('nav', { class: 'crumbs', 'aria-label': 'Ruta' });
   items.forEach((it, i) => {
@@ -553,20 +669,48 @@ function crumbs(items) {
   return nav;
 }
 
+function pageHead(items, title) {
+  return el('header', { class: 'page-head' }, crumbs(items), el('h1', { class: 'title', text: title }));
+}
+
+function card(href, coverId, name, first) {
+  const ph = el('div', { class: 'ph' });
+  if (coverId) ph.append(makeImg(coverId, 700, '', { lazy: !first }));
+  return el('a', { class: 'card', href }, ph, el('span', { class: 'nm', text: name }));
+}
+
+function renderHome() {
+  document.title = CONFIG.SITE_NAME + ' — Fotografía';
+  const wrap = el('div', { class: 'page' });
+  wrap.append(CONFIG.TAGLINE
+    ? el('section', { class: 'intro' }, el('h1', { class: 'lead', text: CONFIG.TAGLINE }))
+    : el('h1', { class: 'sr', text: CONFIG.SITE_NAME }));
+  const work = el('section', { 'aria-labelledby': 'workTitle' },
+    el('div', { class: 'sec-head' }, el('h2', { id: 'workTitle', text: 'Trabajo' })));
+  if (!state.tree.length) {
+    work.append(emptyState(
+      'Aún no hay fotografías',
+      state.admin ? 'Crea la primera categoría con el botón de abajo.' : 'Vuelve pronto.'
+    ));
+  } else {
+    const grid = el('div', { class: 'cards' });
+    state.tree.forEach((c, i) => grid.append(card('#/c/' + c.id, c.cover, c.title, i < 4)));
+    work.append(grid);
+  }
+  wrap.append(work);
+  main.replaceChildren(wrap);
+  updateAdminBar();
+}
+
 function renderCategory(view, cat, token) {
   document.title = `${cat.title} — ${CONFIG.SITE_NAME}`;
   view.folderId = cat.id;
   view.label = cat.title;
   const wrap = el('div', { class: 'page' },
-    crumbs([{ href: '#/', text: 'Inicio' }, { text: cat.title }]),
-    el('h1', { class: 'title', text: cat.title }));
+    pageHead([{ href: '#/', text: 'Inicio' }, { text: cat.title }], cat.title));
   if (cat.albums.length) {
-    const grid = el('div', { class: 'albums' });
-    cat.albums.forEach(a => {
-      const ph = el('div', { class: 'ph' });
-      if (a.cover) ph.append(makeImg(a.cover, 700, ''));
-      grid.append(el('a', { class: 'album', href: `#/c/${cat.id}/${a.id}` }, ph, el('span', { class: 'nm', text: a.title })));
-    });
+    const grid = el('div', { class: 'cards' });
+    cat.albums.forEach((a, i) => grid.append(card(`#/c/${cat.id}/${a.id}`, a.cover, a.title, i < 4)));
     wrap.append(grid);
   }
   const host = el('section', { class: 'wall-host' });
@@ -584,16 +728,49 @@ function renderAlbum(view, cat, album, token) {
   view.folderId = album.id;
   view.label = `${cat.title} / ${album.title}`;
   const wrap = el('div', { class: 'page' },
-    crumbs([{ href: '#/', text: 'Inicio' }, { href: '#/c/' + cat.id, text: cat.title }, { text: album.title }]),
-    el('h1', { class: 'title', text: album.title }));
+    pageHead([{ href: '#/', text: 'Inicio' }, { href: '#/c/' + cat.id, text: cat.title }, { text: album.title }], album.title));
   const host = el('section', { class: 'wall-host' });
   wrap.append(host);
+
+  const idx = cat.albums.findIndex(a => a.id === album.id);
+  const next = cat.albums[idx + 1];
+  wrap.append(el('nav', { class: 'pager', 'aria-label': 'Más carpetas' },
+    el('a', { href: '#/c/' + cat.id }, el('span', { class: 'lbl', text: 'Volver a' }), cat.title),
+    next ? el('a', { class: 'next', href: `#/c/${cat.id}/${next.id}` }, el('span', { class: 'lbl', text: 'Siguiente' }), next.title) : null));
+
   main.replaceChildren(wrap);
   updateAdminBar();
   loadWall(album.id, host, album.title, token, {
     count: true,
     empty: state.admin ? 'Sube las primeras fotos con el botón de abajo.' : 'Esta carpeta todavía no tiene fotos.',
   });
+}
+
+function renderAbout() {
+  const label = aboutLabel();
+  document.title = `${label || 'Sobre mí'} — ${CONFIG.SITE_NAME}`;
+  if (!label) {
+    showPage(emptyState('Próximamente', 'Esta sección todavía no tiene contenido.',
+      el('a', { class: 'btn light', href: '#/' }, 'Volver al inicio')));
+    return;
+  }
+  const grid = el('div', { class: 'about' + (CONFIG.ABOUT_PHOTO ? '' : ' solo') });
+  if (CONFIG.ABOUT_PHOTO) {
+    const ph = el('div', { class: 'about-ph' });
+    ph.append(el('img', { src: CONFIG.ABOUT_PHOTO, alt: 'Retrato de ' + CONFIG.SITE_NAME, decoding: 'async',
+      onerror: () => { ph.remove(); grid.classList.add('solo'); } }));
+    grid.append(ph);
+  }
+  const tx = el('div', { class: 'about-tx' });
+  aboutParagraphs().forEach(p => tx.append(el('p', { text: p })));
+  const items = contactItems();
+  if (items.length) {
+    const dl = el('dl', { class: 'facts' });
+    items.forEach(it => dl.append(el('dt', { text: it.label }), el('dd', {}, it.href ? linkFor(it) : it.text)));
+    tx.append(dl);
+  }
+  grid.append(tx);
+  showPage(pageHead([{ href: '#/', text: 'Inicio' }, { text: label }], label), grid);
 }
 
 function loadWall(folderId, host, title, token, opts) {
@@ -613,7 +790,7 @@ function renderWall(host, ids, folderId, title, opts) {
     if (opts.empty) host.append(emptyState(state.admin ? 'Vacío por ahora' : 'Sin fotos', opts.empty));
     return;
   }
-  if (opts.heading) host.append(el('h2', { class: 'subhead', text: opts.heading }));
+  if (opts.heading) host.append(el('div', { class: 'sec-head subhead' }, el('h2', { text: opts.heading })));
   if (opts.count) host.append(el('p', { class: 'count', text: ids.length === 1 ? '1 foto' : `${ids.length} fotos` }));
   const wall = el('div', { class: 'wall' });
   ids.forEach((id, i) => {
@@ -710,7 +887,10 @@ window.addEventListener('popstate', () => {
 });
 
 document.addEventListener('keydown', e => {
-  if (!lb.open) return;
+  if (!lb.open) {
+    if (e.key === 'Escape' && $('#nav').classList.contains('is-open')) closeMenu();
+    return;
+  }
   if (e.key === 'Escape') { e.preventDefault(); closeLightbox(); }
   else if (e.key === 'ArrowRight') showPhoto(lb.i + 1);
   else if (e.key === 'ArrowLeft') showPhoto(lb.i - 1);
@@ -783,7 +963,7 @@ async function openLogin() {
   msg.textContent = '';
   host.replaceChildren();
   if (!dlg.open) dlg.showModal();
-  if (!CONFIG.GOOGLE_CLIENT_ID) { msg.textContent = 'Falta GOOGLE_CLIENT_ID en la configuración de index.html.'; return; }
+  if (!CONFIG.GOOGLE_CLIENT_ID) { msg.textContent = 'Falta GOOGLE_CLIENT_ID en config.js.'; return; }
   try { await loadGsi(); }
   catch (e) { msg.textContent = 'No se pudo cargar el inicio de sesión de Google. Desactiva el bloqueador de anuncios e inténtalo de nuevo.'; return; }
   if (!gsiReady) {
@@ -1061,11 +1241,15 @@ async function runUpload() {
 /* ───────── Arranque ───────── */
 function init() {
   $('#brand').textContent = CONFIG.SITE_NAME;
-  $('#copy').textContent = `© ${new Date().getFullYear()} ${CONFIG.SITE_NAME}`;
-  if (CONFIG.CONTACT_EMAIL) { const m = $('#mail'); m.href = 'mailto:' + CONFIG.CONTACT_EMAIL; m.hidden = false; }
-  if (CONFIG.INSTAGRAM) { const a = $('#insta'); a.href = CONFIG.INSTAGRAM; a.hidden = false; }
+  renderFooter();
+  renderNav();
   restoreAdmin();
 
+  $('#menuBtn').addEventListener('click', () => {
+    const open = $('#nav').classList.toggle('is-open');
+    $('#menuBtn').setAttribute('aria-expanded', String(open));
+    $('#menuBtn').textContent = open ? 'Cerrar' : 'Menú';
+  });
   $('#adminLink').addEventListener('click', () => { if (state.admin) toast('Ya estás en modo administrador.'); else openLogin(); });
   $('#adminOut').addEventListener('click', () => { logout(); toast('Sesión cerrada.'); });
   $('#loginCancel').addEventListener('click', () => $('#dlgLogin').close());
