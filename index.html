@@ -114,17 +114,33 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .pager .lbl{display:block;color:var(--humo);font-size:.85rem;font-weight:400}
 .pager .next{margin-left:auto;text-align:right}
 
-/* Sobre mí */
-.about{display:grid;gap:32px;align-items:start;padding-top:16px}
-.about-ph{aspect-ratio:4/5;background:var(--gris-12);overflow:hidden}
-.about-ph img{display:block;width:100%;height:100%;object-fit:cover}
-.about-tx p{max-width:60ch;margin:0 0 1em;font-size:1.0625rem;line-height:1.65}
+/* Foto circular del fotógrafo */
+.avatar{--av:136px;width:var(--av);height:var(--av);flex:none;margin:7px;border-radius:50%;overflow:hidden;background:var(--gris-12);box-shadow:0 0 0 6px var(--gris-18),0 0 0 7px rgba(239,238,233,.4)}
+.avatar img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s}
+.avatar img.ok{opacity:1}
+.avatar.lg{--av:184px}
+@media (min-width:700px){.avatar{--av:176px}.avatar.lg{--av:300px}}
+
+/* Sobre mí en el inicio */
+.home-about{margin-top:var(--seccion)}
+.bio{display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding-top:8px}
+.bio-tx{min-width:0}
+@media (min-width:700px){.bio{flex-direction:row;align-items:center;gap:48px}}
+
+/* Texto del fotógrafo (inicio y página Sobre mí) */
+.bio-tx p,.about-tx p{max-width:60ch;margin:0 0 1em;font-size:1.0625rem;line-height:1.65}
+.bio-tx .who,.about-tx .who{margin:0 0 .35em;font-size:1.375rem;font-weight:600;line-height:1.2}
+.more{display:inline-block;padding:8px 0;font-weight:500;text-underline-offset:4px}
+.more:hover{color:var(--humo)}
+
+/* Página Sobre mí */
+.about{display:grid;gap:24px;align-items:start;padding-top:16px}
 .facts{display:grid;grid-template-columns:auto 1fr;gap:10px 28px;max-width:60ch;margin:32px 0 0;padding-top:20px;border-top:1px solid var(--linea)}
 .facts dt{color:var(--humo)}
 .facts dd{margin:0;overflow-wrap:anywhere}
 .facts a{text-underline-offset:3px}
 @media (min-width:800px){
-  .about{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:64px}
+  .about{grid-template-columns:auto minmax(0,1fr);gap:72px}
   .about.solo{grid-template-columns:minmax(0,1fr);max-width:48rem}
 }
 
@@ -325,7 +341,8 @@ body.has-admin #toast{bottom:calc(88px + env(safe-area-inset-bottom))}
 
 const CONFIG = Object.assign({
   API_URL: 'https://script.google.com/macros/s/AKfycbwNsISePyQxIIhHJwCUnancfHCs5mW-leXh2Rz_X9HkHWvK1my0RTWj02SWkA5h_O-qpg/exec', GOOGLE_CLIENT_ID: '422500526386-30n229h03ksvj068f9eom2edvhqo051g.apps.googleusercontent.com',
-  SITE_NAME: 'Portafolio', TAGLINE: 
+  SITE_NAME: 'Portafolio', TAGLINE: '',
+  ABOUT: '', ABOUT_PHOTO: '', ABOUT_PHOTO_POSITION: 'center 25%',
   CONTACT_EMAIL: '', INSTAGRAM: '', WHATSAPP: '', LOCATION: '',
   MAX_SIDE: 2400,       // lado mayor (px) al que se reducen las fotos antes de subirlas
   JPEG_QUALITY: 0.86,
@@ -509,6 +526,44 @@ const hasAbout = () => aboutParagraphs().length > 0 || !!CONFIG.ABOUT_PHOTO;
 function aboutLabel() {
   if (hasAbout()) return 'Sobre mí';
   return contactItems().length ? 'Contacto' : null;
+}
+
+/* Foto circular. ABOUT_PHOTO puede ser un archivo del repositorio ('fotoperfil.jpg'),
+   una dirección completa (https://…) o el ID de un archivo de Drive. */
+function avatar(size, onFail) {
+  const v = String(CONFIG.ABOUT_PHOTO || '').trim();
+  if (!v) return null;
+  const drive = /^[A-Za-z0-9_-]{20,}$/.test(v);
+  const wrap = el('div', { class: 'avatar' + (size ? ' ' + size : '') });
+  const im = document.createElement('img');
+  im.alt = 'Retrato de ' + CONFIG.SITE_NAME;
+  im.decoding = 'async';
+  im.style.objectPosition = CONFIG.ABOUT_PHOTO_POSITION || 'center 25%';
+  let tried = false;
+  im.addEventListener('load', () => im.classList.add('ok'));
+  im.addEventListener('error', () => {
+    if (drive && !tried) { tried = true; im.src = imgFallback(v, 900); return; }
+    wrap.remove();
+    if (onFail) onFail();
+  });
+  im.src = drive ? imgSrc(v, 900) : v;
+  wrap.append(im);
+  return wrap;
+}
+
+function homeAbout() {
+  const paras = aboutParagraphs();
+  const sec = el('section', { class: 'home-about', 'aria-labelledby': 'aboutTitle' },
+    el('div', { class: 'sec-head' }, el('h2', { id: 'aboutTitle', text: 'Sobre mí' })));
+  const bio = el('div', { class: 'bio' });
+  const av = avatar('');
+  if (av) bio.append(av);
+  const tx = el('div', { class: 'bio-tx' }, el('p', { class: 'who', text: CONFIG.SITE_NAME }));
+  if (paras[0]) tx.append(el('p', { text: paras[0] }));
+  if (paras.length > 1 || contactItems().length) tx.append(el('a', { class: 'more', href: '#/sobre-mi', text: 'Leer más' }));
+  bio.append(tx);
+  sec.append(bio);
+  return sec;
 }
 
 function linkFor(item, cls) {
@@ -697,6 +752,7 @@ function renderHome() {
     work.append(grid);
   }
   wrap.append(work);
+  if (hasAbout()) wrap.append(homeAbout());
   main.replaceChildren(wrap);
   updateAdminBar();
 }
@@ -754,13 +810,9 @@ function renderAbout() {
     return;
   }
   const grid = el('div', { class: 'about' + (CONFIG.ABOUT_PHOTO ? '' : ' solo') });
-  if (CONFIG.ABOUT_PHOTO) {
-    const ph = el('div', { class: 'about-ph' });
-    ph.append(el('img', { src: CONFIG.ABOUT_PHOTO, alt: 'Retrato de ' + CONFIG.SITE_NAME, decoding: 'async',
-      onerror: () => { ph.remove(); grid.classList.add('solo'); } }));
-    grid.append(ph);
-  }
-  const tx = el('div', { class: 'about-tx' });
+  const av = avatar('lg', () => grid.classList.add('solo'));
+  if (av) grid.append(av);
+  const tx = el('div', { class: 'about-tx' }, el('p', { class: 'who', text: CONFIG.SITE_NAME }));
   aboutParagraphs().forEach(p => tx.append(el('p', { text: p })));
   const items = contactItems();
   if (items.length) {
