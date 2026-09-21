@@ -18,12 +18,13 @@ window.PORTFOLIO_CONFIG = {
   // BORRADOR: reemplázalo por tu propio texto.
   // Deja una línea en blanco entre párrafos. En el inicio se muestra solo el primero,
   // con el enlace "Leer más" hacia la página completa. Usa comillas invertidas ` `.
-  ABOUT: ` Soy Mateo Gallego , un fotógrafo colombiano con experiencia en fotografía editorial, de estudio y documental, enfocado en la creación de narrativas visuales que combinan estética, concepto y emoción.
-            Mi trabajo parte de la observación y el análisis de cada contexto, utilizando la luz y la composición como herramientas para comunicar ideas y sensaciones.
-            En la fotografía editorial desarrollo imágenes que dialogan con el contenido y el mensaje de cada proyecto, buscando síntesis visual y coherencia narrativa.
-            En el estudio, trabajo desde la planificación y el control del espacio para construir escenas que refuercen la identidad del sujeto o la idea a representar.
-            En el enfoque documental, registro realidades desde una mirada cercana y respetuosa, priorizando la autenticidad y la honestidad visual.
-            Cada proyecto representa para mí una oportunidad de contar historias con intención, generar conexión con el espectador y transformar momentos reales en imágenes significativas.`,
+  ABOUT: `Soy fotógrafo colombiano y trabajo en fotografía editorial, de estudio y documental. Mis imágenes buscan combinar estética, concepto y emoción para contar historias con intención.
+
+Mi trabajo parte de la observación y el análisis de cada contexto. La luz y la composición son mis herramientas para comunicar ideas y sensaciones.
+
+En editorial, desarrollo imágenes que dialogan con el contenido y el mensaje de cada proyecto, con síntesis visual y coherencia narrativa. En estudio, planifico y controlo el espacio para construir escenas que refuercen la identidad del sujeto o la idea a representar. En lo documental, registro la realidad con una mirada cercana y respetuosa, donde pesan la autenticidad y la honestidad visual.
+
+Cada proyecto es una oportunidad para conectar con quien mira y convertir momentos reales en imágenes con significado.`,
 
   // Foto de perfil (se muestra en un círculo). Tres formas de indicarla:
   //   1) Un archivo subido a este repositorio, junto a index.html. Ej: 'fotoperfil.jpg'
