@@ -316,6 +316,34 @@ html.protect #lbImg{-webkit-touch-callout:none;-webkit-user-select:none;user-sel
   html.protect body::before{content:var(--print-msg,"Contenido protegido");display:block;padding:2em;font:16px/1.5 Arial,sans-serif;color:#000}
 }
 
+/* Contacto rápido: logos pegados al borde derecho que acompañan el desplazamiento */
+.dock{--dk:52px;position:fixed;z-index:35;right:max(12px,env(safe-area-inset-right,0px));top:0;width:0;height:100vh;height:100dvh;pointer-events:none}
+.dock[hidden]{display:none}
+.dock-in{position:absolute;right:0;top:calc(36% + var(--prog,0) * 28%);transform:translateY(-50%);display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.dk{position:relative;display:flex;align-items:center;justify-content:flex-end;height:var(--dk);pointer-events:auto;color:#fff;text-decoration:none;transform:translate3d(0,var(--dy,0px),0) rotate(var(--rot,0deg));will-change:transform}
+.dk-ic{position:relative;isolation:isolate;flex:none;width:var(--dk);height:var(--dk);display:grid;place-items:center;border-radius:50%;box-shadow:0 8px 22px rgba(0,0,0,.38);transition:box-shadow .35s;animation:dkin .8s calc(.9s + var(--i,0) * .16s) cubic-bezier(.2,1.4,.4,1) backwards,dkbob 4.6s calc(1.9s + var(--i,0) * .7s) ease-in-out infinite}
+.dk-ic svg{width:calc(var(--dk) * .5);height:calc(var(--dk) * .5);display:block;transition:transform .45s cubic-bezier(.2,1.5,.4,1)}
+.dk-wa .dk-ic{background:#25d366}
+.dk-ig .dk-ic{background:radial-gradient(circle at 30% 107%,#fdf497 0,#fdf497 5%,#fd5949 45%,#d6249f 60%,#285aeb 90%)}
+.dk-ml .dk-ic{background:var(--marfil);color:var(--tinta)}
+.dk-wa .dk-ic::before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;z-index:-1;border-radius:50%;background:#25d366;animation:dkpulse 2.4s ease-out infinite}
+.dk-ig .dk-ic::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;border-radius:50%;background:linear-gradient(115deg,transparent 32%,rgba(255,255,255,.5) 50%,transparent 68%) 150% 0/250% 100% no-repeat;animation:dkshine 3.8s ease-in-out infinite}
+.dk-label{position:absolute;right:calc(var(--dk) + 12px);padding:.55em 1em;border-radius:999px;background:rgba(20,20,19,.9);color:var(--marfil);font-size:.9rem;font-weight:600;white-space:nowrap;opacity:0;transform:translate3d(14px,0,0) scale(.96);transition:opacity .3s,transform .4s cubic-bezier(.2,1.2,.4,1);pointer-events:none}
+.dk:hover .dk-label,.dk:focus-visible .dk-label,.dock.intro .dk-label{opacity:1;transform:none}
+.dk:hover .dk-ic,.dk:focus-visible .dk-ic{box-shadow:0 12px 30px rgba(0,0,0,.5),0 0 0 6px rgba(255,255,255,.16)}
+.dk:hover .dk-ic svg,.dk:focus-visible .dk-ic svg{transform:scale(1.18) rotate(-9deg)}
+.dk:focus-visible{outline:none}
+.dk:focus-visible .dk-ic{outline:2px solid #fff;outline-offset:4px}
+@keyframes dkin{from{opacity:0;transform:translate3d(90px,0,0) scale(.4)}}
+@keyframes dkbob{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-4px,0)}}
+@keyframes dkpulse{0%{transform:scale(1);opacity:.55}70%,100%{transform:scale(1.85);opacity:0}}
+@keyframes dkshine{to{background-position:-50% 0}}
+@media (pointer:coarse){.dock{--dk:46px}}
+@media (max-width:380px){.dock{--dk:42px}.dock-in{gap:10px;top:calc(27% + var(--prog,0) * 33%)}}
+@media (max-width:320px){.dock{--dk:40px}.dock-in{gap:8px;top:calc(19% + var(--prog,0) * 41%)}}
+@media (max-height:520px){.dock{--dk:40px}.dock-in{gap:8px;top:calc(34% + var(--prog,0) * 24%)}}
+@media print{.dock{display:none!important}}
+
 /* Efectos de entrada */
 main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
 .rv{opacity:0;transform:translate3d(0,22px,0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0ms)}
@@ -358,6 +386,7 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
   .lb.loading .lb-stage::after{border-top-color:rgba(239,238,233,.25)}
   .hero-media,.hero-in{transform:none!important}
   #bg{transition:none}
+  .dk{transform:none!important}
   .dot[aria-current="true"]::after{width:calc(100% - 8px)}
 }
 </style>
@@ -464,6 +493,8 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
 
 <input type="file" id="profileInput" accept="image/jpeg,image/png,image/webp" hidden>
 
+<aside class="dock" id="dock" aria-label="Contacto rápido" hidden></aside>
+
 <div id="toast" popover="manual" role="status" aria-live="polite"></div>
 
 <!-- Tus datos personales viven en config.js -->
@@ -482,6 +513,7 @@ const CONFIG = Object.assign({
   SIGNATURE_IMAGE: '', SIGNATURE_MODE: 'auto',
   MAX_SIDE: 2000,       // lado mayor (px) al que se reducen las fotos antes de subirlas
   MAX_VIEW_PX: 2000,    // lado mayor (px) de las fotos que ve el público (menos = más protegidas)
+  DOCK: true, WHATSAPP_MESSAGE: '',
   PROTECT: true, WATERMARK: true, WATERMARK_TEXT: '', WATERMARK_OPACITY: 0.22,
   JPEG_QUALITY: 0.86,
 }, window.PORTFOLIO_CONFIG || {});
@@ -1600,6 +1632,100 @@ function initProtection() {
   document.documentElement.style.setProperty('--print-msg', JSON.stringify('© ' + CONFIG.SITE_NAME + '. Contenido protegido: no se puede imprimir.'));
 }
 
+/* ───────── Contacto rápido (WhatsApp, Instagram, correo) ───────── */
+function dockIcon(kind) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  const add = (tag, attrs) => { const n = document.createElementNS(ns, tag); Object.entries(attrs).forEach(([k, v]) => n.setAttribute(k, v)); svg.append(n); };
+  if (kind === 'wa') {
+    add('path', { fill: 'currentColor', d: 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z' });
+  } else if (kind === 'ig') {
+    svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor'); svg.setAttribute('stroke-width', '2');
+    svg.setAttribute('stroke-linecap', 'round'); svg.setAttribute('stroke-linejoin', 'round');
+    add('rect', { x: '3.5', y: '3.5', width: '17', height: '17', rx: '5' });
+    add('circle', { cx: '12', cy: '12', r: '4' });
+    add('circle', { cx: '17.3', cy: '6.7', r: '1.1', fill: 'currentColor', stroke: 'none' });
+  } else {
+    svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor'); svg.setAttribute('stroke-width', '2');
+    svg.setAttribute('stroke-linecap', 'round'); svg.setAttribute('stroke-linejoin', 'round');
+    add('rect', { x: '3', y: '5', width: '18', height: '14', rx: '2.5' });
+    add('path', { d: 'M4 7.5l8 5.5 8-5.5' });
+  }
+  return svg;
+}
+
+const dock = { el: null, inner: null, items: [], on: false, raf: 0, lastY: 0, vel: 0, prog: 0 };
+
+function initDock() {
+  if (CONFIG.DOCK === false) return;
+  const wa = String(CONFIG.WHATSAPP || '').replace(/\D/g, '');
+  const ig = instagram();
+  const list = [];
+  if (wa) {
+    const msg = CONFIG.WHATSAPP_MESSAGE || ('Hola ' + CONFIG.SITE_NAME + ', vi tu portafolio.');
+    list.push({ kind: 'wa', label: 'WhatsApp', aria: 'Escribir por WhatsApp', href: 'https://wa.me/' + wa + '?text=' + encodeURIComponent(msg), ext: true });
+  }
+  if (ig) list.push({ kind: 'ig', label: 'Instagram', aria: 'Abrir Instagram ' + ig.text, href: ig.href, ext: true });
+  if (CONFIG.CONTACT_EMAIL) list.push({ kind: 'ml', label: 'Correo', aria: 'Enviar un correo', href: 'mailto:' + CONFIG.CONTACT_EMAIL });
+  if (!list.length) return;
+
+  dock.el = $('#dock');
+  dock.inner = el('div', { class: 'dock-in' });
+  dock.items = list.map((it, i) => {
+    const a = el('a', {
+      class: 'dk dk-' + it.kind, href: it.href, 'aria-label': it.aria,
+      target: it.ext ? '_blank' : null, rel: it.ext ? 'noopener' : null,
+    }, el('span', { class: 'dk-label', text: it.label }), el('span', { class: 'dk-ic' }, dockIcon(it.kind)));
+    a.querySelector('.dk-ic').style.setProperty('--i', String(i));
+    return { a, pos: 0, rot: 0 };
+  });
+  dock.inner.append(...dock.items.map(x => x.a));
+  dock.el.append(dock.inner);
+  dock.el.hidden = false;
+  dock.on = true;
+  dock.lastY = window.scrollY;
+  if (!reduceMotion && window.matchMedia && window.matchMedia('(hover:hover)').matches) {
+    dock.el.classList.add('intro');                 // las etiquetas se muestran un momento para llamar la atención
+    setTimeout(() => dock.el && dock.el.classList.remove('intro'), 5200);
+  }
+  window.addEventListener('scroll', dockKick, { passive: true });
+  window.addEventListener('resize', dockKick);
+  dockTick();
+}
+
+function dockKick() { if (dock.on && !dock.raf) dock.raf = requestAnimationFrame(dockTick); }
+
+/* El grupo recorre el borde derecho según avanzas por la página, y cada logo se mueve con un pequeño
+   retraso (efecto cadena) cuando el desplazamiento es rápido. Al detenerte, vuelven a su lugar. */
+function dockTick() {
+  dock.raf = 0;
+  const y = window.scrollY;
+  const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  const target = Math.min(1, Math.max(0, y / max));
+  if (reduceMotion) {
+    dock.prog = target;
+    dock.inner.style.setProperty('--prog', target.toFixed(4));
+    return;
+  }
+  dock.vel += ((y - dock.lastY) - dock.vel) * 0.3;
+  dock.lastY = y;
+  dock.prog += (target - dock.prog) * 0.12;
+  dock.inner.style.setProperty('--prog', dock.prog.toFixed(4));
+  let moving = Math.abs(dock.vel) > 0.05 || Math.abs(target - dock.prog) > 0.0008;
+  dock.items.forEach((it, i) => {
+    const goal = Math.max(-46, Math.min(46, -dock.vel * (0.9 + i * 0.6)));   // cada logo se retrasa un poco más
+    it.pos += (goal - it.pos) * (0.26 - i * 0.05);
+    it.rot += (Math.max(-14, Math.min(14, dock.vel * 0.5 * (i % 2 ? -1 : 1))) - it.rot) * 0.2;
+    if (Math.abs(it.pos) < 0.04 && Math.abs(goal) < 0.04) it.pos = 0; else moving = true;
+    if (Math.abs(it.rot) < 0.04) it.rot = 0; else moving = true;
+    it.a.style.setProperty('--dy', it.pos.toFixed(2) + 'px');
+    it.a.style.setProperty('--rot', it.rot.toFixed(2) + 'deg');
+  });
+  if (moving) dock.raf = requestAnimationFrame(dockTick);
+}
+
 /* ───────── Administrador: sesión ───────── */
 function parseJwt(t) {
   try {
@@ -1987,6 +2113,7 @@ function init() {
   renderFooter();
   renderNav();
   initProtection();
+  initDock();
   const dim = Number(CONFIG.BACKGROUND_DIM);
   if (isFinite(dim)) document.documentElement.style.setProperty('--bg-dim', String(Math.min(1, Math.max(0, dim))));
   const lh = Number(CONFIG.LOGO_HEIGHT);
