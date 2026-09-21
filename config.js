@@ -18,11 +18,11 @@ window.PORTFOLIO_CONFIG = {
   // BORRADOR: reemplázalo por tu propio texto.
   // Deja una línea en blanco entre párrafos. En el inicio se muestra solo el primero,
   // con el enlace "Leer más" hacia la página completa. Usa comillas invertidas ` `.
-  ABOUT: `Soy fotógrafo colombiano y trabajo en fotografía editorial, de estudio y documental. Mis imágenes buscan combinar estética, concepto y emoción para contar historias con intención.
+  ABOUT: `Soy fotógrafo colombiano y trabajo retrato, calle, paisaje y editorial. Mis imágenes combinan estética, concepto y emoción para contar historias con intención.
 
 Mi trabajo parte de la observación y el análisis de cada contexto. La luz y la composición son mis herramientas para comunicar ideas y sensaciones.
 
-En editorial, desarrollo imágenes que dialogan con el contenido y el mensaje de cada proyecto, con síntesis visual y coherencia narrativa. En estudio, planifico y controlo el espacio para construir escenas que refuercen la identidad del sujeto o la idea a representar. En lo documental, registro la realidad con una mirada cercana y respetuosa, donde pesan la autenticidad y la honestidad visual.
+Según el proyecto, trabajo desde distintos enfoques. En editorial, desarrollo imágenes que dialogan con el contenido y el mensaje, con síntesis visual y coherencia narrativa. En estudio, planifico y controlo el espacio para construir escenas que refuercen la identidad del sujeto o la idea a representar. En lo documental, registro la realidad con una mirada cercana y respetuosa, donde pesan la autenticidad y la honestidad visual.
 
 Cada proyecto es una oportunidad para conectar con quien mira y convertir momentos reales en imágenes con significado.`,
 
