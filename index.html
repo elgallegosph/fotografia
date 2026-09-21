@@ -528,12 +528,22 @@ function aboutLabel() {
   return contactItems().length ? 'Contacto' : null;
 }
 
+/* Saca el ID de Drive de un enlace de compartir (…/file/d/ID/view…), de una dirección con ?id=ID,
+   o de un ID suelto (con o sin "?usp=sharing" al final). Devuelve null si es un archivo normal. */
+function driveIdFrom(value) {
+  const v = String(value || '').trim();
+  let m = v.match(/(?:drive|docs)\.google\.com\/.*?(?:\/d\/|[?&]id=)([A-Za-z0-9_-]{20,})/);
+  if (m) return m[1];
+  m = v.match(/^([A-Za-z0-9_-]{20,})(?:[?#].*)?$/);
+  return m ? m[1] : null;
+}
+
 /* Foto circular. ABOUT_PHOTO puede ser un archivo del repositorio ('fotoperfil.jpg'),
-   una dirección completa (https://…) o el ID de un archivo de Drive. */
+   una dirección completa (https://…) o un enlace / ID de un archivo de Drive. */
 function avatar(size, onFail) {
   const v = String(CONFIG.ABOUT_PHOTO || '').trim();
   if (!v) return null;
-  const drive = /^[A-Za-z0-9_-]{20,}$/.test(v);
+  const id = driveIdFrom(v);
   const wrap = el('div', { class: 'avatar' + (size ? ' ' + size : '') });
   const im = document.createElement('img');
   im.alt = 'Retrato de ' + CONFIG.SITE_NAME;
@@ -542,11 +552,16 @@ function avatar(size, onFail) {
   let tried = false;
   im.addEventListener('load', () => im.classList.add('ok'));
   im.addEventListener('error', () => {
-    if (drive && !tried) { tried = true; im.src = imgFallback(v, 900); return; }
+    if (id && !tried) { tried = true; im.src = imgFallback(id, 900); return; }
     wrap.remove();
     if (onFail) onFail();
+    const hint = id
+      ? 'No se pudo cargar tu foto de perfil. En Drive, compártela como “Cualquier persona con el enlace” (o muévela a la carpeta Portafolio).'
+      : 'No se pudo cargar tu foto de perfil. Revisa que el archivo “' + v + '” esté subido junto a index.html y que el nombre coincida.';
+    console.warn(hint);
+    if (state.admin) toast(hint, 'error');
   });
-  im.src = drive ? imgSrc(v, 900) : v;
+  im.src = id ? imgSrc(id, 900) : v;
   wrap.append(im);
   return wrap;
 }
