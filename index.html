@@ -95,7 +95,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:28px 16px}
 .cards:has(>.card:only-child){max-width:min(100%,380px)}
 .card{display:block;text-decoration:none}
-.card .ph{position:relative;aspect-ratio:4/5;background:var(--gris-12);overflow:hidden}
+.card .ph{position:relative;aspect-ratio:4/5;background:var(--gris-12);overflow:hidden;transition:aspect-ratio .3s ease}
 .card .ph::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(20,20,19,0);transition:background .5s}
 .card img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s,transform .7s cubic-bezier(.2,.7,.2,1)}
 .card img.ok{opacity:1}
@@ -1332,7 +1332,12 @@ function pageHead(items, title) {
 
 function card(href, coverId, name, first) {
   const ph = el('div', { class: 'ph' });
-  if (coverId) ph.append(makeImg(coverId, 700, '', { lazy: !first }));
+  if (coverId) {
+    ph.append(makeImg(coverId, 700, '', {
+      lazy: !first,
+      onload: im => { if (im.naturalWidth && im.naturalHeight) ph.style.aspectRatio = im.naturalWidth + '/' + im.naturalHeight; },
+    }));
+  }
   return el('a', { class: 'card', href, 'data-rv': true }, ph, el('span', { class: 'nm', text: name }));
 }
 
