@@ -41,4 +41,5 @@ Cada proyecto es una oportunidad para conectar con quien mira y convertir moment
   INSTAGRAM: 'https://www.instagram.com/_soy_mateo_',
   WHATSAPP: '573218870891',           // Con código de país, solo números. Ej: '573001234567'
   LOCATION: 'SAN JOSE, CALDAS',           // Ej: 'Manizales, Colombia'
+WATERMARK: false,
 };
