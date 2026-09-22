@@ -98,6 +98,9 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .card .ph{position:relative;aspect-ratio:4/5;background:var(--gris-12);overflow:hidden;transition:aspect-ratio .3s ease}
 .card .ph::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(20,20,19,0);transition:background .5s}
 .card img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s,transform .7s cubic-bezier(.2,.7,.2,1)}
+
+.card .ph-slide{position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity .9s ease}
+.card .ph-slide.on{opacity:1}
 .card img.ok{opacity:1}
 .card img.broken{display:none}
 .card .nm{display:inline-block;margin-top:12px;padding-bottom:3px;font-family:var(--titular);font-size:1.1875rem;font-weight:500;line-height:1.3;background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .4s cubic-bezier(.2,.7,.2,1)}
@@ -274,6 +277,7 @@ body.has-admin #toast{bottom:calc(var(--bar-h,76px) + 12px)}
 .dot::before{background:rgba(239,238,233,.35)}
 .dot::after{right:auto;width:0;background:var(--marfil)}
 .dot[aria-current="true"]::after{width:calc(100% - 8px);transition:width 6.5s linear}
+.hero-count{font-family:var(--serif);font-style:italic}
 [id=work]{scroll-margin-top:var(--cabecera)}
 .after-hero{padding-top:var(--seccion)}
 
@@ -528,7 +532,7 @@ const CONFIG = Object.assign({
 const $ = (s, r) => (r || document).querySelector(s);
 const main = $('#main');
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
-const state = { tree: [], profile: null, assets: {}, admin: null, view: { type: 'home' }, token: 0, routeKey: null, revealed: new Set() };
+const state = { tree: [], profile: null, assets: {}, admin: null, view: { type: 'home' }, token: 0, routeKey: null, revealed: new Set(), cardTimers: [] };
 const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 class ApiError extends Error {
@@ -1040,6 +1044,42 @@ function applyAssets() {
   applyBackground();
   applyLogo();
 }
+/* Mezcla al azar (Fisher–Yates), sin alterar el arreglo original. */
+function shuffled(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* Fotos de una carpeta de Drive, en caché para no pedirlas dos veces en la misma visita. */
+const folderPhotosCache = new Map();
+function folderPhotos(id) {
+  if (!folderPhotosCache.has(id)) {
+    folderPhotosCache.set(id, apiGet({ action: 'photos', folder: id }).then(d => d.photos || []).catch(() => []));
+  }
+  return folderPhotosCache.get(id);
+}
+
+/* Todas las fotos de una categoría: las suyas propias más las de todas sus carpetas. */
+function categoryAllPhotos(cat) {
+  return Promise.all([folderPhotos(cat.id)].concat(cat.albums.map(a => folderPhotos(a.id)))).then(arrs => arrs.flat());
+}
+
+/* Todas las fotos del portafolio, para la portada. */
+function allPortfolioPhotos() {
+  const jobs = [];
+  state.tree.forEach(c => {
+    jobs.push(folderPhotos(c.id).then(ids => ids.map(id => ({ id, title: c.title, href: '#/c/' + c.id }))));
+    c.albums.forEach(a => {
+      jobs.push(folderPhotos(a.id).then(ids => ids.map(id => ({ id, title: c.title + ' · ' + a.title, href: '#/c/' + c.id + '/' + a.id }))));
+    });
+  });
+  return Promise.all(jobs).then(arrs => arrs.flat());
+}
+
 /* ───────── Efectos: revelado al desplazarse y portada ───────── */
 let revealIO = null;
 /* Los elementos con data-rv aparecen suavemente al entrar en pantalla (una vez por página). */
@@ -1063,7 +1103,8 @@ function reveal(scope, root) {
 }
 
 const SLIDE_MS = 6500;
-const hs = { el: null, timer: null, i: 0, slides: [], dots: [], cap: null, items: [], visible: true, io: null };
+const hs = { el: null, timer: null, i: 0, slides: [], dots: [], counter: null, cap: null, items: [], visible: true, io: null };
+const HERO_MAX_PHOTOS = 30; // cuántas fotos como máximo rotan en la portada (de todas las que subiste)
 
 function heroSize() {
   const px = window.innerWidth * Math.min(window.devicePixelRatio || 1, 2);
@@ -1093,9 +1134,10 @@ function heroGo(i, byUser) {
   if (img.complete && img.naturalWidth) activate(); else img.addEventListener('load', activate, { once: true });
   hs.slides[(hs.i + 1) % n]._load(); // precarga la siguiente
   hs.dots.forEach((d, k) => d.setAttribute('aria-current', String(k === hs.i)));
+  if (hs.counter) hs.counter.textContent = (hs.i + 1) + ' / ' + n;
   const c = hs.items[hs.i];
   hs.cap.textContent = c.title;
-  hs.cap.href = '#/c/' + c.id;
+  hs.cap.href = c.href;
   if (byUser) heroRestart();
 }
 
@@ -1113,7 +1155,7 @@ function stopHero() {
   clearInterval(hs.timer);
   hs.timer = null;
   if (hs.io) { hs.io.disconnect(); hs.io = null; }
-  hs.el = null; hs.slides = []; hs.dots = []; hs.items = [];
+  hs.el = null; hs.slides = []; hs.dots = []; hs.items = []; hs.counter = null;
   document.body.classList.remove('hero-on');
   $('.top').classList.remove('solid');
 }
@@ -1131,25 +1173,40 @@ function heroTitle() {
   return el('h1', { class: 'hero-script', text: t });
 }
 
-function buildHero() {
-  const items = state.tree.filter(c => c.cover).slice(0, 6);
-  if (!items.length) return null;
+/* Portada de arranque: la portada de cada categoría, mientras se cargan todas tus fotos. */
+function heroItemsFromCovers() {
+  return state.tree.filter(c => c.cover).slice(0, 6).map(c => ({ id: c.cover, title: c.title, href: '#/c/' + c.id }));
+}
+
+/* Reconstruye las fotos y los indicadores de la portada, sin recrear el resto (título, botones, firma). */
+function mountHero(items, preferId) {
   const w = heroSize();
   hs.items = items;
-  hs.i = 0;
-  hs.slides = items.map((c, i) => {
+  hs.i = -1; // fuerza a heroGo a tratarlo como un cambio, aunque el índice numérico coincida
+  hs.slides = items.map((it, i) => {
     const img = document.createElement('img');
     img.alt = '';
     img.decoding = 'async';
     if (i === 0) img.setAttribute('fetchpriority', 'high');
     let fb = false;
-    img.addEventListener('error', () => { if (!fb) { fb = true; img.src = imgFallback(c.cover, w); } });
+    img.addEventListener('error', () => { if (!fb) { fb = true; img.src = imgFallback(it.id, w); } });
     const slide = el('div', { class: 'slide' }, img);
     slide.style.setProperty('--kx', i % 2 ? '-1.5%' : '1.5%');
-    slide._load = () => { if (!img.getAttribute('src')) img.src = imgSrc(c.cover, w); return img; };
+    slide._load = () => { if (!img.getAttribute('src')) img.src = imgSrc(it.id, w); return img; };
     return slide;
   });
-  hs.dots = items.map((c, i) => el('button', { class: 'dot', type: 'button', 'aria-label': 'Ver ' + c.title, onclick: () => heroGo(i, true) }));
+  // Con muchas fotos, un punto por foto sería ilegible: se cambia por un contador "3 / 24".
+  const many = items.length > 10;
+  hs.dots = many ? [] : items.map((it, i) => el('button', { class: 'dot', type: 'button', 'aria-label': 'Ver ' + it.title, onclick: () => heroGo(i, true) }));
+  hs.counter = many ? el('span', { class: 'hero-count' }) : null;
+  $('.hero-media', hs.el).replaceChildren(...hs.slides);
+  $('.hero-nav', hs.el).replaceChildren(many ? hs.counter : el('div', { class: 'dots' }, hs.dots));
+  const start = preferId != null ? Math.max(0, items.findIndex(it => it.id === preferId)) : 0;
+  heroGo(start, false);
+}
+
+function buildHero(initialItems) {
+  if (!initialItems.length) return null;
   hs.cap = el('a', { class: 'hero-cap' });
   const label = aboutLabel();
   const mid = el('div', { class: 'hero-mid' });
@@ -1160,15 +1217,15 @@ function buildHero() {
   const actions = el('div', { class: 'hero-actions' },
     el('button', { class: 'btn light', type: 'button', onclick: goWork }, 'Ver trabajo'),
     label ? el('a', { class: 'btn ghost', href: '#/sobre-mi', text: label }) : null);
-  const meta = el('div', { class: 'hero-meta' }, hs.cap, el('div', { class: 'dots' }, hs.dots));
+  const meta = el('div', { class: 'hero-meta' }, hs.cap, el('div', { class: 'hero-nav' }));
   const hero = el('section', { class: 'hero', 'aria-label': 'Presentación' },
-    el('div', { class: 'hero-media', 'aria-hidden': 'true' }, hs.slides),
+    el('div', { class: 'hero-media', 'aria-hidden': 'true' }),
     el('div', { class: 'hero-in' },
       mid,
       heroTitle(),
       el('div', { class: 'hero-foot' }, actions, meta)));
   hs.el = hero;
-  heroGo(0, false);
+  mountHero(initialItems);
   if (assetUrl('firma', 0)) {
     loadInk('firma', CONFIG.SIGNATURE_MODE || 'auto').then(src => {
       if (hs.el !== hero) return; // la portada ya se reemplazó
@@ -1176,6 +1233,18 @@ function buildHero() {
     }).catch(() => { /* sin firma, la portada queda igual */ });
   }
   return hero;
+}
+
+/* Una vez cargado el árbol, se traen las fotos de TODAS las carpetas y se reemplazan
+   las portadas de categoría por una selección al azar de todo el portafolio. */
+function upgradeHeroToAllPhotos(hero) {
+  allPortfolioPhotos().then(list => {
+    if (hs.el !== hero || !list.length) return; // se salió del inicio, o aún no hay fotos
+    const chosen = shuffled(list).slice(0, HERO_MAX_PHOTOS);
+    const curId = hs.items[hs.i] && hs.items[hs.i].id;
+    mountHero(chosen, curId);
+    heroRestart();
+  }).catch(() => { /* si falla, la portada se queda con las portadas de categoría */ });
 }
 
 function startHero() {
@@ -1218,6 +1287,8 @@ function route() {
     if (!reduceMotion) { main.classList.remove('enter'); void main.offsetWidth; main.classList.add('enter'); }
   }
   state.routeKey = key;
+  state.cardTimers.forEach(clearInterval);
+  state.cardTimers = [];
   stopHero();
 
   let view;
@@ -1330,21 +1401,53 @@ function pageHead(items, title) {
   return el('header', { class: 'page-head' }, crumbs(items), el('h1', { class: 'title', text: title }));
 }
 
-function card(href, coverId, name, first) {
+const CARD_ROTATE_MS = 4500;    // cada cuánto cambia la foto dentro del cuadro
+const CARD_ROTATE_MAX = 6;      // cuántas fotos como máximo rotan en un mismo cuadro
+
+/* `photosFn`, si se da, es una función que devuelve (con una promesa) las demás fotos de esa
+   categoría o carpeta; con más de una, el cuadro las va rotando de a poco, con un desvanecido. */
+function card(href, coverId, name, first, photosFn) {
   const ph = el('div', { class: 'ph' });
-  if (coverId) {
-    ph.append(makeImg(coverId, 700, '', {
+  let ratioSet = false;
+  const layer = (id, on) => {
+    const im = makeImg(id, 700, '', {
       lazy: !first,
-      onload: im => { if (im.naturalWidth && im.naturalHeight) ph.style.aspectRatio = im.naturalWidth + '/' + im.naturalHeight; },
-    }));
+      onload: im2 => { if (!ratioSet && im2.naturalWidth && im2.naturalHeight) { ratioSet = true; ph.style.aspectRatio = im2.naturalWidth + '/' + im2.naturalHeight; } },
+    });
+    const slide = el('div', { class: 'ph-slide' + (on ? ' on' : '') }, im);
+    ph.append(slide);
+    return slide;
+  };
+  let cur = coverId ? layer(coverId, true) : null;
+  const a = el('a', { class: 'card', href, 'data-rv': true }, ph, el('span', { class: 'nm', text: name }));
+  if (photosFn) {
+    photosFn().then(ids => {
+      if (!a.isConnected) return; // ya se cambió de página mientras se cargaba
+      const pool = shuffled(ids.filter(id => id !== coverId));
+      const seq = (coverId ? [coverId] : []).concat(pool).slice(0, CARD_ROTATE_MAX);
+      if (seq.length < 2) return;
+      let idx = 0;
+      const timer = setInterval(() => {
+        if (!a.isConnected) { clearInterval(timer); return; }
+        idx = (idx + 1) % seq.length;
+        const next = layer(seq[idx], false);
+        requestAnimationFrame(() => {
+          next.classList.add('on');
+          const old = cur;
+          if (old) { old.classList.remove('on'); setTimeout(() => old.remove(), 950); }
+          cur = next;
+        });
+      }, CARD_ROTATE_MS + Math.random() * 1500); // un pequeño desfase, para que no roten todas a la vez
+      state.cardTimers.push(timer);
+    }).catch(() => { /* sin las demás fotos, el cuadro se queda con su portada */ });
   }
-  return el('a', { class: 'card', href, 'data-rv': true }, ph, el('span', { class: 'nm', text: name }));
+  return a;
 }
 
 function renderHome() {
   document.title = CONFIG.SITE_NAME + ' — Fotografía';
   stopHero();
-  const hero = buildHero();
+  const hero = buildHero(heroItemsFromCovers());
   const wrap = el('div', { class: 'page' });
   if (!hero) {
     wrap.append(CONFIG.TAGLINE
@@ -1360,13 +1463,13 @@ function renderHome() {
     ));
   } else {
     const grid = el('div', { class: 'cards' });
-    state.tree.forEach((c, i) => grid.append(card('#/c/' + c.id, c.cover, c.title, i < 4)));
+    state.tree.forEach((c, i) => grid.append(card('#/c/' + c.id, c.cover, c.title, i < 4, () => categoryAllPhotos(c))));
     work.append(grid);
   }
   wrap.append(work);
   if (hasAbout()) wrap.append(homeAbout());
   main.replaceChildren(...(hero ? [hero] : []), wrap);
-  if (hero) startHero();
+  if (hero) { startHero(); upgradeHeroToAllPhotos(hero); }
   updateAdminBar();
   reveal('home', wrap);
 }
@@ -1379,7 +1482,7 @@ function renderCategory(view, cat, token) {
     pageHead([{ href: '#/', text: 'Inicio' }, { text: cat.title }], cat.title));
   if (cat.albums.length) {
     const grid = el('div', { class: 'cards' });
-    cat.albums.forEach((a, i) => grid.append(card(`#/c/${cat.id}/${a.id}`, a.cover, a.title, i < 4)));
+    cat.albums.forEach((a, i) => grid.append(card(`#/c/${cat.id}/${a.id}`, a.cover, a.title, i < 4, () => folderPhotos(a.id))));
     wrap.append(grid);
   }
   const host = el('section', { class: 'wall-host' });
