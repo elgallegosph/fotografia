@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://lh3.googleusercontent.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wdth,wght@75..100,200..800&family=Newsreader:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wdth,wght@75..100,200..800&family=Newsreader:ital,wght@0,400;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Mrs+Saint+Delafield&display=swap" rel="stylesheet">
 <style>
 /* ───────── Sistema de diseño ─────────
    Base: gris medio neutro, para que el color de las fotos se vea fiel.
@@ -29,6 +29,8 @@
   --linea:rgba(239,238,233,.16);
   --display:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
   --serif:'Newsreader',Georgia,'Times New Roman',serif;
+  --titular:'Fraunces','Newsreader',Georgia,serif;   /* letra de los títulos: elegante y con carácter, para que destaque */
+  --script:'Mrs Saint Delafield','Newsreader',cursive;  /* caligrafía fina, como una firma, para el texto de la portada */
   --pad:clamp(16px,4vw,40px);
   --max:1360px;
   --seccion:clamp(48px,7vw,96px);
@@ -80,12 +82,12 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .crumbs a:hover{color:var(--marfil)}
 .crumbs .sep{margin:0 .5em}
 .crumbs [aria-current]{color:var(--marfil)}
-.title{margin:.3em 0 .1em;font-size:clamp(2.5rem,7vw,5rem);font-weight:300;font-stretch:75%;line-height:1;letter-spacing:-.02em;overflow-wrap:break-word}
+.title{margin:.3em 0 .1em;font-family:var(--titular);font-style:italic;font-optical-sizing:auto;font-size:clamp(2.5rem,7vw,4.75rem);font-weight:460;line-height:1.02;letter-spacing:-.005em;overflow-wrap:break-word}
 .count{margin:-8px 0 24px;font-family:var(--serif);font-style:italic;color:var(--humo)}
 
 /* Inicio */
 .intro{padding:clamp(40px,8vw,96px) 0 clamp(32px,5vw,64px)}
-.lead{margin:0;max-width:26em;font-size:clamp(2rem,5.2vw,4rem);font-weight:300;font-stretch:75%;line-height:1.05;letter-spacing:-.02em}
+.lead{margin:0;max-width:24em;font-family:var(--titular);font-style:italic;font-optical-sizing:auto;font-size:clamp(1.9rem,5vw,3.75rem);font-weight:460;line-height:1.06;letter-spacing:-.005em}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:0 0 24px;padding-bottom:12px;border-bottom:1px solid var(--linea)}
 .sec-head h2{margin:0;font-size:1.25rem;font-weight:600}
 
@@ -98,7 +100,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .card img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s,transform .7s cubic-bezier(.2,.7,.2,1)}
 .card img.ok{opacity:1}
 .card img.broken{display:none}
-.card .nm{display:inline-block;margin-top:12px;padding-bottom:3px;font-size:1.0625rem;font-weight:500;line-height:1.3;background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .4s cubic-bezier(.2,.7,.2,1)}
+.card .nm{display:inline-block;margin-top:12px;padding-bottom:3px;font-family:var(--titular);font-size:1.1875rem;font-weight:500;line-height:1.3;background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .4s cubic-bezier(.2,.7,.2,1)}
 @media (hover:hover){.card:hover img.ok{transform:scale(1.06)}.card:hover .ph::after{background:rgba(20,20,19,.22)}.card:hover .nm,.card:focus-visible .nm{background-size:100% 1px}}
 @media (min-width:700px){.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 24px}}
 @media (min-width:900px){.cards{grid-template-columns:repeat(auto-fit,minmax(max(180px,calc((100% - 72px) / 4 - .5px)),1fr))}}
@@ -139,7 +141,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 
 /* Texto del fotógrafo (inicio y página Sobre mí) */
 .bio-tx p,.about-tx p{max-width:60ch;margin:0 0 1em;font-size:1.0625rem;line-height:1.65}
-.bio-tx .who,.about-tx .who{margin:0 0 .35em;font-size:1.375rem;font-weight:600;line-height:1.2}
+.bio-tx .who,.about-tx .who{margin:0 0 .35em;font-family:var(--titular);font-style:italic;font-size:1.6rem;font-weight:560;line-height:1.2}
 .more{display:inline-block;padding:8px 0;font-weight:500;text-underline-offset:4px}
 .more:hover{color:var(--humo)}
 
@@ -156,7 +158,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 
 /* Estados vacíos y de carga */
 .empty{max-width:46rem;padding:clamp(40px,10vh,96px) 0}
-.empty h2{margin:0 0 .3em;font-size:clamp(2rem,6vw,3.5rem);font-weight:300;font-stretch:75%;line-height:1;letter-spacing:-.02em}
+.empty h2{margin:0 0 .3em;font-family:var(--titular);font-style:italic;font-optical-sizing:auto;font-size:clamp(2rem,6vw,3.5rem);font-weight:460;line-height:1.05;letter-spacing:-.01em}
 .empty p{margin:0 0 1.2em;color:var(--humo);max-width:36rem}
 .sk{background:linear-gradient(90deg,var(--gris-12),var(--gris-25),var(--gris-12));background-size:200% 100%;animation:sh 1.6s linear infinite}
 .sk-lead{height:clamp(56px,10vw,120px);max-width:60%;margin:clamp(40px,8vw,96px) 0 clamp(32px,5vw,64px)}
@@ -256,7 +258,11 @@ body.has-admin #toast{bottom:calc(var(--bar-h,76px) + 12px)}
 @keyframes kb{from{transform:scale(1.13) translate3d(var(--kx,1.5%),1%,0)}to{transform:scale(1) translate3d(0,0,0)}}
 .hero::before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;z-index:1;background:linear-gradient(to bottom,rgba(20,20,19,.6) 0,rgba(20,20,19,0) 24%),linear-gradient(to top,rgba(20,20,19,.82) 0,rgba(20,20,19,.25) 45%,rgba(20,20,19,0) 70%)}
 .hero-in{position:relative;z-index:2;height:100%;max-width:var(--max);margin:0 auto;padding:0 var(--gr) clamp(28px,5vw,56px) var(--gl);display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(20px,3vw,32px);opacity:calc(1 - var(--p,0) * 1.15);transform:translate3d(0,calc(var(--p,0) * -28px),0)}
-.hero h1{margin:0;max-width:12em;font-size:clamp(2.6rem,8.6vw,7.5rem);font-weight:300;font-stretch:75%;line-height:.95;letter-spacing:-.025em;text-shadow:0 2px 30px rgba(20,20,19,.35);animation:rise .9s .15s cubic-bezier(.2,.7,.2,1) both}
+
+.hero h1{margin:0;max-width:20em;display:flex;flex-direction:column;align-items:flex-start;text-shadow:0 2px 30px rgba(20,20,19,.4);animation:rise .9s .15s cubic-bezier(.2,.7,.2,1) both}
+.hero-kicker{font-family:var(--titular);font-style:italic;font-optical-sizing:auto;text-transform:uppercase;letter-spacing:.12em;font-size:clamp(1.05rem,2.5vw,1.9rem);font-weight:560;line-height:1.3;opacity:.94}
+.hero-script{font-family:var(--script);font-weight:400;font-style:normal;font-size:clamp(3.6rem,10.5vw,8.5rem);line-height:1.05;margin-top:.08em}
+
 .hero-foot{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 24px;animation:rise .9s .35s cubic-bezier(.2,.7,.2,1) both}
 .hero-actions{display:flex;flex-wrap:wrap;gap:12px}
 .hero-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px}
@@ -358,7 +364,8 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
 @media (max-height:520px){
   :root{--cabecera:52px}
   .hero{height:100vh;height:100svh;min-height:300px}
-  .hero h1{font-size:clamp(1.75rem,5.2vw,2.75rem);line-height:1}
+  .hero-kicker{font-size:clamp(.9rem,3vw,1.3rem)}
+  .hero-script{font-size:clamp(2.4rem,8vw,3.75rem);line-height:1}
   .hero-in{gap:14px;padding-bottom:22px}
   .hero-foot{align-items:center}
   .lb-stage{padding-top:8px}
@@ -1111,6 +1118,19 @@ function stopHero() {
   $('.top').classList.remove('solid');
 }
 
+/* El texto de la portada: si trae un guion largo ("—"), la primera parte se ve en
+   una serif fina en mayúsculas y el resto en una caligrafía elegante, como una firma. */
+function heroTitle() {
+  const t = String(CONFIG.TAGLINE || CONFIG.SITE_NAME || '').trim();
+  const parts = t.split(/\s*[—–]\s*/);
+  if (parts.length > 1 && parts[0] && parts.slice(1).join('').trim()) {
+    return el('h1', {},
+      el('span', { class: 'hero-kicker', text: parts[0] }),
+      el('span', { class: 'hero-script', text: parts.slice(1).join(' — ') }));
+  }
+  return el('h1', { class: 'hero-script', text: t });
+}
+
 function buildHero() {
   const items = state.tree.filter(c => c.cover).slice(0, 6);
   if (!items.length) return null;
@@ -1145,7 +1165,7 @@ function buildHero() {
     el('div', { class: 'hero-media', 'aria-hidden': 'true' }, hs.slides),
     el('div', { class: 'hero-in' },
       mid,
-      el('h1', { text: CONFIG.TAGLINE || CONFIG.SITE_NAME }),
+      heroTitle(),
       el('div', { class: 'hero-foot' }, actions, meta)));
   hs.el = hero;
   heroGo(0, false);
