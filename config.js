@@ -7,7 +7,7 @@
 window.PORTFOLIO_CONFIG = {
  
   /* ── Conexión con Drive (obligatorio) ─────────────────────────────── */
-  API_URL: 'https://script.google.com/macros/s/AKfycby5npuEV0z37ucUtgW8zKVcWluXSkHWEeF4arWbjNSwuucdRz8NanYL5RaHQMnyF3T0oA/exec',
+  API_URL: 'https://script.google.com/macros/s/AKfycbyZDFd0fZcWbYR9buN_Lbzq6ApLi09s_LhumJe5X4zVE02pDhikAYh9NtiqahxPUU_FYA/exec',
   GOOGLE_CLIENT_ID: '422500526386-30n229h03ksvj068f9eom2edvhqo051g.apps.googleusercontent.com',
  
   /* ── Tu marca ─────────────────────────────────────────────────────── */
