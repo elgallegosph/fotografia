@@ -532,7 +532,7 @@ const CONFIG = Object.assign({
 const $ = (s, r) => (r || document).querySelector(s);
 const main = $('#main');
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
-const state = { tree: [], profile: null, assets: {}, admin: null, view: { type: 'home' }, token: 0, routeKey: null, revealed: new Set(), cardTimers: [] };
+const state = { tree: [], profile: null, assets: {}, admin: null, view: { type: 'home' }, token: 0, routeKey: null, revealed: new Set(), cardTimers: [], views: null };
 const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 class ApiError extends Error {
@@ -1946,7 +1946,7 @@ function updateAdminBar() {
   bar.hidden = false;
   document.body.classList.add('has-admin');
   syncBarHeight();
-  $('#adminWho').textContent = 'Modo administrador · ' + state.admin.email;
+  $('#adminWho').textContent = 'Modo administrador · ' + state.admin.email + (state.views != null ? ' · ' + state.views.toLocaleString('es') + ' visitas' : '');
   const acts = $('#adminActions');
   acts.replaceChildren();
   const b = (text, fn, solid) => el('button', { class: 'btn' + (solid ? ' solid' : ''), type: 'button', onclick: fn }, text);
@@ -2235,6 +2235,16 @@ async function runUpload() {
   }
 }
 
+/* Cuenta esta visita una sola vez, al abrir la página (no en cada cambio de sección dentro de ella).
+   No se cuenta si ya habías entrado como administrador, para no inflar el número con tus propias pruebas. */
+function registerVisit() {
+  if (!CONFIG.API_URL || state.admin) return;
+  apiGet({ action: 'view' }).then(d => {
+    state.views = d.views;
+    updateAdminBar(); // por si entras como administrador más tarde en la misma visita
+  }).catch(() => { /* si falla, sencillamente no se suma esta visita */ });
+}
+
 /* ───────── Arranque ───────── */
 function init() {
   $('#brand').textContent = CONFIG.SITE_NAME;
@@ -2256,6 +2266,7 @@ function init() {
     }
   });
   restoreAdmin();
+  registerVisit();
 
   $('#menuBtn').addEventListener('click', () => {
     const open = $('#nav').classList.toggle('is-open');
