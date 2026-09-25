@@ -1049,12 +1049,22 @@ function applyBackground() {
   im.src = u.src;
 }
  
+/* El ícono de la pestaña: usa tu logo (tal cual, sin aclararlo) en cuanto hay uno; si no, el círculo por defecto. */
+const DEFAULT_FAVICON = (document.querySelector('link[rel="icon"]') || {}).href || '';
+function updateFavicon(url) {
+  let link = document.querySelector('link[rel="icon"]');
+  if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
+  link.removeAttribute('type');
+  link.href = url || DEFAULT_FAVICON;
+}
+ 
 function applyLogo() {
   const brand = $('#brand');
   const u = assetUrl('logo', 0);
   const key = u ? u.src : '';
   if (brand.dataset.logo === key) return;
   brand.dataset.logo = key;
+  updateFavicon(u ? u.src : null);
   brand.classList.remove('has-logo');
   document.body.classList.remove('has-logo');
   brand.replaceChildren(document.createTextNode(CONFIG.SITE_NAME));
