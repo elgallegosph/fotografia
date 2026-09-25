@@ -57,7 +57,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .skip{position:absolute;left:-9999px;top:8px;z-index:100;background:var(--marfil);color:var(--tinta);padding:.6em 1em}
 .skip:focus{left:8px}
 .page{max-width:var(--max);margin:0 auto;padding:0 var(--gr) 0 var(--gl)}
-
+ 
 /* Cabecera fija con menú */
 .top{position:sticky;top:0;z-index:30;background:var(--gris-18);box-shadow:0 1px 0 var(--linea);transition:background-color .35s,box-shadow .35s}
 .top-in{max-width:var(--max);margin:0 auto;padding:0 var(--gr) 0 var(--gl);height:var(--cabecera);display:flex;align-items:center;justify-content:space-between;gap:24px}
@@ -74,7 +74,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .top.compact .nav a{padding:14px 0;border-bottom:1px solid var(--linea);font-size:1.05rem;white-space:normal}
 .top.compact .nav a:last-child{border-bottom:0}
 .top.compact .nav a[aria-current]{border-bottom-color:var(--linea);font-weight:600}
-
+ 
 /* Cabecera de página (migas + título) */
 .page-head{padding:24px 0}
 .crumbs{color:var(--humo);font-size:.9rem}
@@ -84,13 +84,13 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .crumbs [aria-current]{color:var(--marfil)}
 .title{margin:.3em 0 .1em;font-family:var(--titular);font-style:italic;font-optical-sizing:auto;font-size:clamp(2.5rem,7vw,4.75rem);font-weight:460;line-height:1.02;letter-spacing:-.005em;overflow-wrap:break-word}
 .count{margin:-8px 0 24px;font-family:var(--serif);font-style:italic;color:var(--humo)}
-
+ 
 /* Inicio */
 .intro{padding:clamp(40px,8vw,96px) 0 clamp(32px,5vw,64px)}
 .lead{margin:0;max-width:24em;font-family:var(--titular);font-style:italic;font-optical-sizing:auto;font-size:clamp(1.9rem,5vw,3.75rem);font-weight:460;line-height:1.06;letter-spacing:-.005em}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:0 0 24px;padding-bottom:12px;border-bottom:1px solid var(--linea)}
 .sec-head h2{margin:0;font-size:1.25rem;font-weight:600}
-
+ 
 /* Cuadrícula uniforme (categorías y carpetas) */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:28px 16px}
 .cards:has(>.card:only-child){max-width:min(100%,380px)}
@@ -98,7 +98,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .card .ph{position:relative;aspect-ratio:4/5;background:var(--gris-12);overflow:hidden;transition:aspect-ratio .3s ease}
 .card .ph::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background:rgba(20,20,19,0);transition:background .5s}
 .card img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s,transform .7s cubic-bezier(.2,.7,.2,1)}
-
+ 
 .card .ph-slide{position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity .9s ease}
 .card .ph-slide.on{opacity:1}
 .card img.ok{opacity:1}
@@ -108,7 +108,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 @media (min-width:700px){.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:40px 24px}}
 @media (min-width:900px){.cards{grid-template-columns:repeat(auto-fit,minmax(max(180px,calc((100% - 72px) / 4 - .5px)),1fr))}}
 @media (min-width:2000px){.cards{grid-template-columns:repeat(auto-fit,minmax(max(180px,calc((100% - 96px) / 5 - .5px)),1fr))}}
-
+ 
 /* Galería de fotos */
 .sec-head.subhead{margin-top:var(--seccion)}
 .wall{column-width:130px;column-gap:12px}
@@ -122,32 +122,32 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .del:hover{background:#fff}
 @media (min-width:700px){.wall{column-width:200px;column-gap:16px}.tile{margin-bottom:16px}}
 @media (min-width:1800px){.wall{column-width:260px}}
-
+ 
 .pager{display:flex;justify-content:space-between;gap:16px;margin-top:var(--seccion);padding-top:20px;border-top:1px solid var(--linea)}
 .pager a{display:block;font-weight:500;text-decoration:none}
 .pager a:hover{text-decoration:underline;text-underline-offset:4px}
 .pager .lbl{display:block;color:var(--humo);font-size:.85rem;font-weight:400}
 .pager .next{margin-left:auto;text-align:right}
-
+ 
 /* Foto circular del fotógrafo */
 .avatar{--av:136px;width:var(--av);height:var(--av);flex:none;margin:7px;border-radius:50%;overflow:hidden;background:var(--gris-12);box-shadow:0 0 0 6px var(--gris-18),0 0 0 7px rgba(239,238,233,.4)}
 .avatar img{display:block;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s}
 .avatar img.ok{opacity:1}
 .avatar.lg{--av:184px}
 @media (min-width:700px){.avatar{--av:176px}.avatar.lg{--av:300px}}
-
+ 
 /* Sobre mí en el inicio */
 .home-about{margin-top:var(--seccion)}
 .bio{display:flex;flex-direction:column;align-items:flex-start;gap:16px;padding-top:8px}
 .bio-tx{min-width:0}
 @media (min-width:700px){.bio{flex-direction:row;align-items:center;gap:48px}}
-
+ 
 /* Texto del fotógrafo (inicio y página Sobre mí) */
 .bio-tx p,.about-tx p{max-width:60ch;margin:0 0 1em;font-size:1.0625rem;line-height:1.65}
 .bio-tx .who,.about-tx .who{margin:0 0 .35em;font-family:var(--titular);font-style:italic;font-size:1.6rem;font-weight:560;line-height:1.2}
 .more{display:inline-block;padding:8px 0;font-weight:500;text-underline-offset:4px}
 .more:hover{color:var(--humo)}
-
+ 
 /* Página Sobre mí */
 .about{display:grid;gap:24px;align-items:start;padding-top:16px}
 .facts{display:grid;grid-template-columns:auto 1fr;gap:10px 28px;max-width:60ch;margin:32px 0 0;padding-top:20px;border-top:1px solid var(--linea)}
@@ -158,7 +158,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
   .about{grid-template-columns:auto minmax(0,1fr);gap:72px}
   .about.solo{grid-template-columns:minmax(0,1fr);max-width:48rem}
 }
-
+ 
 /* Estados vacíos y de carga */
 .empty{max-width:46rem;padding:clamp(40px,10vh,96px) 0}
 .empty h2{margin:0 0 .3em;font-family:var(--titular);font-style:italic;font-optical-sizing:auto;font-size:clamp(2rem,6vw,3.5rem);font-weight:460;line-height:1.05;letter-spacing:-.01em}
@@ -168,7 +168,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .sk-title{height:clamp(48px,8vw,80px);max-width:40%;margin:56px 0 32px}
 .sk-card{aspect-ratio:4/5}
 @keyframes sh{to{background-position:-200% 0}}
-
+ 
 /* Pie */
 .foot{margin-top:var(--seccion);border-top:1px solid var(--linea);color:var(--humo);font-size:.925rem}
 .foot-in{max-width:var(--max);margin:0 auto;padding:40px var(--gr) 24px var(--gl)}
@@ -183,7 +183,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .linklike{background:none;border:0;color:inherit;cursor:pointer;padding:.7em 0;text-decoration:underline;text-underline-offset:3px}
 .linklike:hover{color:var(--marfil)}
 @media (min-width:700px){.foot-grid{grid-template-columns:2fr 1fr 1fr}}
-
+ 
 /* Botones */
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.55em 1.1em;border:1.5px solid currentColor;border-radius:2px;background:transparent;color:inherit;font-weight:600;cursor:pointer;text-decoration:none}
 .btn.solid{background:var(--tinta);border-color:var(--tinta);color:var(--marfil)}
@@ -197,7 +197,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .btn.ico svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .btn.ico .lbl{display:none}
 @media (min-width:641px){.btn.ico .lbl{display:inline}}
-
+ 
 /* Barra de administrador */
 .admin-bar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;padding:10px var(--gr) calc(10px + env(safe-area-inset-bottom)) var(--gl);background:var(--marfil);color:var(--tinta)}
 .admin-bar[hidden]{display:none}
@@ -205,7 +205,7 @@ dialog :focus-visible,.admin-bar :focus-visible{outline-color:var(--tinta)}
 .admin-bar .acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .admin-bar .linklike{color:var(--tinta)}
 @media (max-width:640px){.admin-bar .who{display:none}.admin-bar{justify-content:flex-end}}
-
+ 
 /* Ventanas de diálogo */
 dialog{width:min(92vw,460px);max-height:90vh;max-height:calc(100dvh - 32px);overflow:auto;padding:24px;border:0;border-radius:2px;background:var(--marfil);color:var(--tinta)}
 dialog::backdrop{background:rgba(20,20,19,.72)}
@@ -226,7 +226,7 @@ dialog .row{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
 .uplist .ok .st{color:#1f6b3a}
 .uplist .bad .st{color:var(--error)}
 .upsum{margin:12px 0 0;color:#57564f;font-size:.95rem;min-height:1.4em}
-
+ 
 /* Visor de fotos */
 .lb{position:fixed;top:0;right:0;bottom:0;left:0;z-index:60;display:flex;flex-direction:column;background:rgba(22,22,21,.98)}
 .lb[hidden]{display:none}
@@ -244,13 +244,13 @@ dialog .row{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
 .lb-next{right:8px;top:50%;margin-top:-24px}
 .lb-bar{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:8px var(--gr) calc(12px + env(safe-area-inset-bottom)) var(--gl);color:var(--humo);font-size:.95rem}
 .lb-count{font-family:var(--serif);font-style:italic}
-
+ 
 /* Avisos */
 #toast{position:fixed;top:auto;right:auto;bottom:24px;left:50%;z-index:80;margin:0;width:max-content;height:auto;overflow:visible;transform:translateX(-50%);max-width:min(92vw,440px);padding:.7em 1.1em;border:0;border-radius:2px;background:var(--marfil);color:var(--tinta);font:inherit;font-weight:500;opacity:0;pointer-events:none;transition:opacity .2s}
 #toast.show{opacity:1}
 #toast.error{background:var(--error);color:#fff}
 body.has-admin #toast{bottom:calc(var(--bar-h,76px) + 12px)}
-
+ 
 /* Portada del inicio: fotos de tus categorías con zoom lento y desvanecido */
 .hero{position:relative;margin-top:calc(var(--cabecera) * -1);height:clamp(480px,88vh,880px);height:clamp(480px,88svh,880px);overflow:hidden;background:var(--gris-12);color:var(--marfil)}
 .hero-media{position:absolute;left:0;right:0;top:-80px;bottom:0;transform:translate3d(0,calc(var(--p,0) * 80px),0);will-change:transform}
@@ -261,11 +261,11 @@ body.has-admin #toast{bottom:calc(var(--bar-h,76px) + 12px)}
 @keyframes kb{from{transform:scale(1.13) translate3d(var(--kx,1.5%),1%,0)}to{transform:scale(1) translate3d(0,0,0)}}
 .hero::before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;z-index:1;background:linear-gradient(to bottom,rgba(20,20,19,.6) 0,rgba(20,20,19,0) 24%),linear-gradient(to top,rgba(20,20,19,.82) 0,rgba(20,20,19,.25) 45%,rgba(20,20,19,0) 70%)}
 .hero-in{position:relative;z-index:2;height:100%;max-width:var(--max);margin:0 auto;padding:0 var(--gr) clamp(28px,5vw,56px) var(--gl);display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(20px,3vw,32px);opacity:calc(1 - var(--p,0) * 1.15);transform:translate3d(0,calc(var(--p,0) * -28px),0)}
-
+ 
 .hero h1{margin:0;max-width:20em;display:flex;flex-direction:column;align-items:flex-start;text-shadow:0 2px 30px rgba(20,20,19,.4);animation:rise .9s .15s cubic-bezier(.2,.7,.2,1) both}
 .hero-kicker{font-family:var(--titular);font-style:italic;font-optical-sizing:auto;text-transform:uppercase;letter-spacing:.12em;font-size:clamp(1.05rem,2.5vw,1.9rem);font-weight:560;line-height:1.3;opacity:.94}
 .hero-script{font-family:var(--script);font-weight:400;font-style:normal;font-size:clamp(3.6rem,10.5vw,8.5rem);line-height:1.05;margin-top:.08em}
-
+ 
 .hero-foot{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 24px;animation:rise .9s .35s cubic-bezier(.2,.7,.2,1) both}
 .hero-actions{display:flex;flex-wrap:wrap;gap:12px}
 .hero-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px}
@@ -280,13 +280,13 @@ body.has-admin #toast{bottom:calc(var(--bar-h,76px) + 12px)}
 .hero-count{font-family:var(--serif);font-style:italic}
 [id=work]{scroll-margin-top:var(--cabecera)}
 .after-hero{padding-top:var(--seccion)}
-
+ 
 /* La cabecera es transparente sobre la portada y se vuelve sólida al bajar */
 body.hero-on .top:not(.solid):not(.menu-open){background:transparent;box-shadow:0 1px 0 transparent}
 body.hero-on .top:not(.solid):not(.menu-open) .nav a{color:rgba(239,238,233,.88)}
 body.hero-on .top:not(.solid):not(.menu-open) .nav a:hover,body.hero-on .top:not(.solid):not(.menu-open) .nav a[aria-current]{color:#fff}
 body.hero-on .top:not(.solid):not(.menu-open) .nav a[aria-current]{border-bottom-color:#fff}
-
+ 
 /* Imágenes del sitio: fondo, logo y firma */
 #bg{position:fixed;top:0;left:0;width:100%;height:100vh;height:100lvh;z-index:-1;overflow:hidden;opacity:0;transition:opacity 1.2s ease;pointer-events:none}
 .bg-fill,.bg-par,.bg-img{position:absolute;top:0;right:0;bottom:0;left:0}
@@ -316,7 +316,7 @@ body.has-logo{--cabecera:calc(var(--logo-h) + 24px)}   /* la cabecera crece con 
 .hero-mid{position:relative;flex:1 1 auto;min-height:0;padding-top:var(--cabecera);pointer-events:none}
 .hero-sign{position:absolute;left:50%;top:calc(50% + var(--cabecera) / 2);transform:translate(-50%,-50%);width:clamp(10rem,32vw,26rem);max-width:80%;max-height:calc(100% - var(--cabecera) - 8px);object-fit:contain;filter:drop-shadow(0 2px 16px rgba(20,20,19,.5));animation:sign 1.9s .5s cubic-bezier(.5,.1,.2,1) backwards}
 @keyframes sign{from{clip-path:inset(-40px 100% -40px -40px);opacity:0}12%{opacity:1}to{clip-path:inset(-40px -40px -40px -40px);opacity:1}}
-
+ 
 /* Protección de las fotos: sin clic derecho, sin guardar al mantener pulsado, sin arrastrar, sin imprimir */
 html.protect .tile,html.protect .card,html.protect .open,html.protect .hero,html.protect #lightbox,html.protect .avatar,html.protect .brand,html.protect .hero-sign,html.protect #bg{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 html.protect img{pointer-events:none;-webkit-user-drag:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
@@ -325,7 +325,7 @@ html.protect #lbImg{-webkit-touch-callout:none;-webkit-user-select:none;user-sel
   html.protect body *{display:none!important}
   html.protect body::before{content:var(--print-msg,"Contenido protegido");display:block;padding:2em;font:16px/1.5 Arial,sans-serif;color:#000}
 }
-
+ 
 /* Contacto rápido: logos pegados al borde derecho que acompañan el desplazamiento */
 .dock{--dk:52px;position:fixed;z-index:35;right:max(12px,env(safe-area-inset-right,0px));top:0;width:0;height:100vh;height:100dvh;pointer-events:none}
 .dock[hidden]{display:none}
@@ -353,17 +353,41 @@ html.protect #lbImg{-webkit-touch-callout:none;-webkit-user-select:none;user-sel
 @media (max-width:320px){.dock{--dk:40px}.dock-in{gap:8px;top:calc(19% + var(--prog,0) * 41%)}}
 @media (max-height:520px){.dock{--dk:40px}.dock-in{gap:8px;top:calc(34% + var(--prog,0) * 24%)}}
 @media print{.dock{display:none!important}}
-
+ 
+/* Formulario de contacto y comentarios */
+.form-card{max-width:34rem;margin-top:var(--seccion)}
+.field{margin-bottom:16px}
+.field label{display:block;font-weight:600;margin-bottom:.35em;font-size:.95rem}
+.field input,.field textarea{width:100%;padding:.65em .8em;border:1.5px solid var(--linea);border-radius:2px;background:rgba(255,255,255,.03);color:var(--marfil);font:inherit;transition:border-color .2s}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--marfil)}
+.field textarea{resize:vertical;min-height:110px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.form-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.form-err{min-height:1.4em;margin:10px 0 0;color:var(--error)}
+.form-ok{min-height:1.4em;margin:10px 0 0;color:var(--humo)}
+ 
+.comment-list{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:22px;max-width:40rem}
+.comment{position:relative;padding:0 44px 20px 0;border-bottom:1px solid var(--linea)}
+.comment-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-bottom:6px}
+.comment-name{font-weight:600}
+.comment-date{color:var(--humo);font-size:.85rem;font-family:var(--serif);font-style:italic}
+.comment-text{margin:0;line-height:1.6;overflow-wrap:anywhere;white-space:pre-line}
+.comment-del{position:absolute;top:-4px;right:0;width:32px;height:32px;border:0;border-radius:50%;background:transparent;color:var(--humo);font-size:20px;line-height:1;cursor:pointer}
+.comment-del:hover{color:var(--marfil);background:rgba(255,255,255,.08)}
+.comment-empty{color:var(--humo);margin-top:24px}
+.more-comments{margin-top:20px}
+.more-comments[hidden]{display:none}
+ 
 /* Efectos de entrada */
 main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
 .rv{opacity:0;transform:translate3d(0,22px,0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0ms)}
 .rv.in{opacity:1;transform:none}
 @keyframes rise{from{opacity:0;transform:translate3d(0,14px,0)}to{opacity:1;transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
-
+ 
 /* Monitores grandes en horizontal: la portada aprovecha mejor la altura */
 @media (orientation:landscape) and (min-height:900px){.hero{height:clamp(480px,88vh,1300px);height:clamp(480px,88svh,1300px)}}
-
+ 
 /* Celular en horizontal u otras pantallas bajas */
 @media (max-height:520px){
   :root{--cabecera:52px}
@@ -377,7 +401,7 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
   .lb-bar{padding-top:2px;padding-bottom:calc(6px + env(safe-area-inset-bottom))}
   .title{font-size:clamp(2.25rem,7vw,3.5rem)}
 }
-
+ 
 /* Pantallas táctiles: objetivos de toque de al menos 44 px */
 @media (pointer:coarse){
   a,button,label[for]{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -390,8 +414,9 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
   .foot li a,.foot li .plain{padding:11px 0}
   .linklike{min-height:44px;display:inline-flex;align-items:center}
   .btn:active,.dot:active,.linklike:active{opacity:.75}
+  .comment-del{width:44px;height:44px;top:-8px}
 }
-
+ 
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{transition:none!important;animation:none!important}
   .lb.loading .lb-stage::after{border-top-color:rgba(239,238,233,.25)}
@@ -405,7 +430,7 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
 <body>
 <div id="bg" aria-hidden="true"><div class="bg-fill"></div><div class="bg-par"><div class="bg-img"></div></div></div>
 <a class="skip" href="#main">Saltar al contenido</a>
-
+ 
 <header class="top">
   <div class="top-in">
     <a class="brand" id="brand" href="#/">Portafolio</a>
@@ -413,11 +438,11 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
     <nav class="nav" id="nav" aria-label="Principal"></nav>
   </div>
 </header>
-
+ 
 <main id="main" tabindex="-1">
   <noscript><div class="page"><div class="empty"><h2>Se necesita JavaScript</h2><p>Activa JavaScript en tu navegador para ver el portafolio.</p></div></div></noscript>
 </main>
-
+ 
 <footer class="foot">
   <div class="foot-in">
     <div class="foot-grid">
@@ -434,7 +459,7 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
     </div>
   </div>
 </footer>
-
+ 
 <div class="admin-bar" id="adminBar" hidden>
   <span class="who" id="adminWho"></span>
   <span class="acts">
@@ -442,7 +467,7 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
     <button class="linklike" id="adminOut" type="button">Salir</button>
   </span>
 </div>
-
+ 
 <!-- Nombre de carpeta -->
 <dialog id="dlgName" aria-labelledby="nameTitle">
   <form id="fName" novalidate>
@@ -457,7 +482,7 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
     </div>
   </form>
 </dialog>
-
+ 
 <!-- Subir fotos -->
 <dialog id="dlgUpload" aria-labelledby="upTitle">
   <h2 id="upTitle">Subir fotos</h2>
@@ -471,7 +496,7 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
     <button class="btn solid" type="button" id="upGo" disabled>Subir</button>
   </div>
 </dialog>
-
+ 
 <!-- Inicio de sesión -->
 <dialog id="dlgLogin" aria-labelledby="loginTitle">
   <h2 id="loginTitle">Entrar como administrador</h2>
@@ -480,7 +505,7 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
   <p class="err" id="loginMsg" role="alert"></p>
   <div class="row"><button class="btn" type="button" id="loginCancel">Cancelar</button></div>
 </dialog>
-
+ 
 <!-- Confirmar -->
 <dialog id="dlgConfirm" aria-labelledby="confirmTitle">
   <h2 id="confirmTitle">¿Seguro?</h2>
@@ -490,7 +515,7 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
     <button class="btn solid" type="button" id="confirmOk">Eliminar</button>
   </div>
 </dialog>
-
+ 
 <!-- Visor -->
 <div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Visor de fotos" hidden>
   <figure class="lb-stage" id="lbStage">
@@ -501,18 +526,18 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
   <button class="lb-btn lb-next" id="lbNext" type="button" aria-label="Foto siguiente"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
   <div class="lb-bar"><span id="lbTitle"></span><span class="lb-count" id="lbCount"></span></div>
 </div>
-
+ 
 <input type="file" id="profileInput" accept="image/jpeg,image/png,image/webp" hidden>
-
+ 
 <aside class="dock" id="dock" aria-label="Contacto rápido" hidden></aside>
-
+ 
 <div id="toast" popover="manual" role="status" aria-live="polite"></div>
-
+ 
 <!-- Tus datos personales viven en config.js -->
 <script src="config.js"></script>
 <script>
 'use strict';
-
+ 
 const CONFIG = Object.assign({
   API_URL: 'https://script.google.com/macros/s/AKfycbyZDFd0fZcWbYR9buN_Lbzq6ApLi09s_LhumJe5X4zVE02pDhikAYh9NtiqahxPUU_FYA/exec', GOOGLE_CLIENT_ID: '422500526386-30n229h03ksvj068f9eom2edvhqo051g.apps.googleusercontent.com',
   SITE_NAME: 'Portafolio', TAGLINE: '',
@@ -525,20 +550,21 @@ const CONFIG = Object.assign({
   MAX_SIDE: 2000,       // lado mayor (px) al que se reducen las fotos antes de subirlas
   MAX_VIEW_PX: 2000,    // lado mayor (px) de las fotos que ve el público (menos = más protegidas)
   DOCK: true, WHATSAPP_MESSAGE: '',
+  CONTACT_FORM: true, COMMENTS: true,
   PROTECT: true, WATERMARK: true, WATERMARK_TEXT: '', WATERMARK_OPACITY: 0.22,
   JPEG_QUALITY: 0.86,
 }, window.PORTFOLIO_CONFIG || {});
-
+ 
 const $ = (s, r) => (r || document).querySelector(s);
 const main = $('#main');
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
 const state = { tree: [], profile: null, assets: {}, admin: null, view: { type: 'home' }, token: 0, routeKey: null, revealed: new Set(), cardTimers: [], views: null };
 const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
+ 
 class ApiError extends Error {
   constructor(code, message) { super(message); this.code = code; }
 }
-
+ 
 /* ───────── Utilidades de DOM ───────── */
 function el(tag, attrs, ...kids) {
   const n = document.createElement(tag);
@@ -555,7 +581,7 @@ function el(tag, attrs, ...kids) {
   }
   return n;
 }
-
+ 
 let toastTimer, toastHideTimer;
 function toast(msg, kind) {
   const t = $('#toast');
@@ -577,11 +603,11 @@ function toast(msg, kind) {
     }, 260);
   }, 4200);
 }
-
+ 
 /* ───────── Imágenes desde Drive ───────── */
 const imgSrc = (id, w) => `https://lh3.googleusercontent.com/d/${id}=w${w}`;
 const imgFallback = (id, w) => `https://drive.google.com/thumbnail?id=${id}&sz=w${w}`;
-
+ 
 function makeImg(id, w, alt, opts) {
   opts = opts || {};
   const img = document.createElement('img');
@@ -600,7 +626,7 @@ function makeImg(id, w, alt, opts) {
   img.src = imgSrc(id, w);
   return img;
 }
-
+ 
 /* ───────── Comunicación con Apps Script ───────── */
 async function fetchJson(url, opts, timeout) {
   const ctrl = new AbortController();
@@ -623,7 +649,7 @@ async function fetchJson(url, opts, timeout) {
     clearTimeout(timer);
   }
 }
-
+ 
 const inflight = new Map();
 function apiGet(params) {
   const q = new URLSearchParams(params).toString();
@@ -632,7 +658,7 @@ function apiGet(params) {
   inflight.set(q, p);
   return p;
 }
-
+ 
 function postRaw(body, token, timeout) {
   return fetchJson(
     CONFIG.API_URL,
@@ -640,7 +666,12 @@ function postRaw(body, token, timeout) {
     timeout || 45000
   );
 }
-
+ 
+/* Para acciones públicas (comentarios, contacto): cualquier visitante puede usarlas, sin iniciar sesión. */
+function publicPost(body, timeout) {
+  return fetchJson(CONFIG.API_URL, { method: 'POST', body: JSON.stringify(body) }, timeout || 20000);
+}
+ 
 async function post(body, timeout) {
   if (!state.admin) throw new ApiError('AUTH', 'Inicia sesión como administrador.');
   if (state.admin.exp * 1000 < Date.now() + 15000) {
@@ -654,7 +685,7 @@ async function post(body, timeout) {
     throw e;
   }
 }
-
+ 
 /* Muestra lo guardado al instante y actualiza en segundo plano si algo cambió. */
 function swr(key, fetcher, onData, onUnchanged) {
   const ck = 'pf:' + key;
@@ -674,11 +705,11 @@ function swr(key, fetcher, onData, onUnchanged) {
     err => { if (!cached) throw err; }
   );
 }
-
+ 
 function invalidate(keys) {
   keys.forEach(k => { try { localStorage.removeItem('pf:' + k); } catch (e) { /* nada */ } });
 }
-
+ 
 /* ───────── Contacto y "Sobre mí" ───────── */
 function instagram() {
   const v = String(CONFIG.INSTAGRAM || '').trim();
@@ -690,7 +721,7 @@ function instagram() {
   const h = v.replace(/^@/, '');
   return { href: 'https://instagram.com/' + h, text: '@' + h };
 }
-
+ 
 function contactItems() {
   const items = [];
   if (CONFIG.CONTACT_EMAIL) items.push({ label: 'Correo', text: CONFIG.CONTACT_EMAIL, href: 'mailto:' + CONFIG.CONTACT_EMAIL });
@@ -701,17 +732,18 @@ function contactItems() {
   if (CONFIG.LOCATION) items.push({ label: 'Ubicación', text: CONFIG.LOCATION });
   return items;
 }
-
+ 
 const aboutParagraphs = () => String(CONFIG.ABOUT || '').split(/\n\s*\n/).map(t => t.trim()).filter(Boolean);
 /* La foto subida desde la página (Admin → Foto de perfil) manda sobre ABOUT_PHOTO de config.js. */
 const photoRef = () => state.profile || String(CONFIG.ABOUT_PHOTO || '').trim();
 const hasAbout = () => aboutParagraphs().length > 0 || !!photoRef();
-
+ 
 function aboutLabel() {
   if (hasAbout()) return 'Sobre mí';
-  return contactItems().length ? 'Contacto' : null;
+  if (contactItems().length || CONFIG.CONTACT_FORM !== false || CONFIG.COMMENTS !== false) return 'Contacto';
+  return null;
 }
-
+ 
 /* Saca el ID de Drive de un enlace de compartir (…/file/d/ID/view…), de una dirección con ?id=ID,
    o de un ID suelto (con o sin "?usp=sharing" al final). Devuelve null si es un archivo normal. */
 function driveIdFrom(value) {
@@ -721,7 +753,7 @@ function driveIdFrom(value) {
   m = v.match(/^([A-Za-z0-9_-]{20,})(?:[?#].*)?$/);
   return m ? m[1] : null;
 }
-
+ 
 /* Foto circular. ABOUT_PHOTO puede ser un archivo del repositorio ('fotoperfil.jpg'),
    una dirección completa (https://…) o un enlace / ID de un archivo de Drive. */
 function avatar(size, onFail) {
@@ -749,7 +781,7 @@ function avatar(size, onFail) {
   wrap.append(im);
   return wrap;
 }
-
+ 
 function homeAbout() {
   const paras = aboutParagraphs();
   const sec = el('section', { class: 'home-about', 'aria-labelledby': 'aboutTitle' },
@@ -764,11 +796,11 @@ function homeAbout() {
   sec.append(bio);
   return sec;
 }
-
+ 
 function linkFor(item, cls) {
   return el('a', { href: item.href, class: cls, target: item.ext ? '_blank' : null, rel: item.ext ? 'noopener' : null, text: item.text });
 }
-
+ 
 /* ───────── Cabecera y pie ───────── */
 function renderNav() {
   const nav = $('#nav');
@@ -779,7 +811,7 @@ function renderNav() {
   updateNav();
   fitNav();
 }
-
+ 
 function updateNav() {
   const v = state.view || {};
   document.querySelectorAll('#nav a').forEach(a => {
@@ -788,7 +820,7 @@ function updateNav() {
     if (on) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   });
 }
-
+ 
 /* Decide si los enlaces caben en la cabecera o pasan al menú desplegable (según el ancho real y el tipo de letra cargado). */
 function fitNav() {
   const top = $('.top'), inner = $('.top-in');
@@ -797,7 +829,7 @@ function fitNav() {
   top.classList.toggle('compact', compact);
   if (!compact) closeMenu();
 }
-
+ 
 function closeMenu() {
   $('#nav').classList.remove('is-open');
   $('.top').classList.remove('menu-open');
@@ -805,7 +837,7 @@ function closeMenu() {
   b.setAttribute('aria-expanded', 'false');
   b.textContent = 'Menú';
 }
-
+ 
 function renderFooter() {
   $('#fBrand').textContent = CONFIG.SITE_NAME;
   $('#fTag').textContent = CONFIG.TAGLINE || '';
@@ -815,18 +847,18 @@ function renderFooter() {
   $('#fContact').replaceChildren(...items.map(it => el('li', {}, it.href ? linkFor(it) : el('span', { class: 'plain', text: it.text }))));
   renderFooterWork();
 }
-
+ 
 function renderFooterWork() {
   const list = state.tree.map(c => el('li', {}, el('a', { href: '#/c/' + c.id, text: c.title })));
   $('#fWorkCol').hidden = !list.length;
   $('#fWork').replaceChildren(...list);
 }
-
+ 
 /* ───────── Imágenes del sitio: fondo, logo y firma ───────── */
 /* Salen de archivos llamados fondo, logo y firma en la carpeta Portafolio de Drive
    (los detecta el script) o, si prefieres, de config.js (enlace de Drive o archivo de GitHub). */
 const ASSET_CONFIG = { fondo: 'BACKGROUND_IMAGE', logo: 'LOGO_IMAGE', firma: 'SIGNATURE_IMAGE' };
-
+ 
 function assetUrl(slot, w) {
   const id = state.assets[slot] || driveIdFrom(CONFIG[ASSET_CONFIG[slot]]);
   if (id) {
@@ -837,7 +869,7 @@ function assetUrl(slot, w) {
   const ref = String(CONFIG[ASSET_CONFIG[slot]] || '').trim();
   return ref ? { src: ref, fb: null } : null;
 }
-
+ 
 /* Prepara un logo o una firma:
    · recorta los márgenes vacíos, para que el dibujo se vea más grande;
    · si es a color, conserva sus colores;
@@ -855,11 +887,11 @@ function prepareInk(im, mode) {
   const data = x.getImageData(0, 0, w, h);   // lanza un error si la imagen no permite leer sus píxeles
   const a = data.data;
   const luma = i => (0.2126 * a[i] + 0.7152 * a[i + 1] + 0.0722 * a[i + 2]) / 255;
-
+ 
   let minA = 255;
   for (let i = 3; i < a.length; i += 4) if (a[i] < minA) minA = a[i];
   const opaque = minA >= 250;
-
+ 
   // Imagen opaca: el fondo de cada fila se estima con sus bordes (sirve para degradados y texturas)
   const rowBg = opaque ? new Array(h) : null;
   if (opaque) {
@@ -876,7 +908,7 @@ function prepareInk(im, mode) {
     const bg = rowBg[y];
     return Math.max(Math.abs(a[i] - bg[0]), Math.abs(a[i + 1] - bg[1]), Math.abs(a[i + 2] - bg[2]));
   };
-
+ 
   // Dónde está el dibujo, cuánto color tiene y qué tan claro u oscuro es
   const rows = new Uint32Array(h), cols = new Uint32Array(w);
   let chromaSum = 0, lumaSum = 0, cn = 0;
@@ -902,7 +934,7 @@ function prepareInk(im, mode) {
   const trim = cw * ch < w * h * 0.94;
   const colorful = chromaSum / cn > 0.22;
   const meanL = lumaSum / cn;
-
+ 
   let changed = false;
   if (!opaque) {
     if (force || (!colorful && meanL < 0.55)) {           // tinta oscura de un solo color → blanca
@@ -934,7 +966,7 @@ function prepareInk(im, mode) {
     changed = true;
   }
   if (!changed && !trim) return null;
-
+ 
   x.putImageData(data, 0, 0);
   if (!trim) return c.toDataURL('image/png');
   const out = document.createElement('canvas');
@@ -942,7 +974,7 @@ function prepareInk(im, mode) {
   out.getContext('2d').drawImage(c, x0, y0, cw, ch, 0, 0, cw, ch);
   return out.toDataURL('image/png');
 }
-
+ 
 const inkCache = new Map();
 /* Carga logo o firma. Intenta con permiso CORS (para poder analizar los colores); si no se puede, la muestra tal cual. */
 function loadInk(slot, mode) {
@@ -968,7 +1000,7 @@ function loadInk(slot, mode) {
   p.catch(() => inkCache.delete(key));
   return p;
 }
-
+ 
 /* Ajusta la imagen a la pantalla sin recortarla y funde sus bordes con el relleno desenfocado. */
 function layoutBg() {
   const bg = $('#bg'), img = $('.bg-img', bg);
@@ -986,7 +1018,7 @@ function layoutBg() {
   });
   img.classList.add('feather');
 }
-
+ 
 function applyBackground() {
   const bg = $('#bg');
   const u = assetUrl('fondo', heroSize());
@@ -1016,7 +1048,7 @@ function applyBackground() {
   im.onerror = () => { if (!fb && u.fb) { fb = true; im.src = u.fb; } };
   im.src = u.src;
 }
-
+ 
 function applyLogo() {
   const brand = $('#brand');
   const u = assetUrl('logo', 0);
@@ -1039,7 +1071,7 @@ function applyLogo() {
     onScroll();
   }).catch(() => { /* si no carga, queda el nombre en texto */ });
 }
-
+ 
 function applyAssets() {
   applyBackground();
   applyLogo();
@@ -1053,7 +1085,7 @@ function shuffled(arr) {
   }
   return a;
 }
-
+ 
 /* Fotos de una carpeta de Drive, en caché para no pedirlas dos veces en la misma visita. */
 const folderPhotosCache = new Map();
 function folderPhotos(id) {
@@ -1062,12 +1094,12 @@ function folderPhotos(id) {
   }
   return folderPhotosCache.get(id);
 }
-
+ 
 /* Todas las fotos de una categoría: las suyas propias más las de todas sus carpetas. */
 function categoryAllPhotos(cat) {
   return Promise.all([folderPhotos(cat.id)].concat(cat.albums.map(a => folderPhotos(a.id)))).then(arrs => arrs.flat());
 }
-
+ 
 /* Todas las fotos del portafolio, para la portada. */
 function allPortfolioPhotos() {
   const jobs = [];
@@ -1079,7 +1111,7 @@ function allPortfolioPhotos() {
   });
   return Promise.all(jobs).then(arrs => arrs.flat());
 }
-
+ 
 /* ───────── Efectos: revelado al desplazarse y portada ───────── */
 let revealIO = null;
 /* Los elementos con data-rv aparecen suavemente al entrar en pantalla (una vez por página). */
@@ -1101,16 +1133,16 @@ function reveal(scope, root) {
   }
   root.querySelectorAll('[data-rv]').forEach(n => { n.classList.add('rv'); revealIO.observe(n); });
 }
-
+ 
 const SLIDE_MS = 6500;
 const hs = { el: null, timer: null, i: 0, slides: [], dots: [], counter: null, cap: null, items: [], visible: true, io: null };
 const HERO_MAX_PHOTOS = 30; // cuántas fotos como máximo rotan en la portada (de todas las que subiste)
-
+ 
 function heroSize() {
   const px = window.innerWidth * Math.min(window.devicePixelRatio || 1, 2);
   return Math.min(maxView(), Math.max(1200, Math.ceil(px / 200) * 200));
 }
-
+ 
 function heroGo(i, byUser) {
   const n = hs.slides.length;
   if (!n) return;
@@ -1140,7 +1172,7 @@ function heroGo(i, byUser) {
   hs.cap.href = c.href;
   if (byUser) heroRestart();
 }
-
+ 
 function heroRestart() {
   clearInterval(hs.timer);
   hs.timer = null;
@@ -1150,7 +1182,7 @@ function heroRestart() {
     heroGo(hs.i + 1, false);
   }, SLIDE_MS);
 }
-
+ 
 function stopHero() {
   clearInterval(hs.timer);
   hs.timer = null;
@@ -1159,7 +1191,7 @@ function stopHero() {
   document.body.classList.remove('hero-on');
   $('.top').classList.remove('solid');
 }
-
+ 
 /* El texto de la portada: si trae un guion largo ("—"), la primera parte se ve en
    una serif fina en mayúsculas y el resto en una caligrafía elegante, como una firma. */
 function heroTitle() {
@@ -1172,12 +1204,12 @@ function heroTitle() {
   }
   return el('h1', { class: 'hero-script', text: t });
 }
-
+ 
 /* Portada de arranque: la portada de cada categoría, mientras se cargan todas tus fotos. */
 function heroItemsFromCovers() {
   return state.tree.filter(c => c.cover).slice(0, 6).map(c => ({ id: c.cover, title: c.title, href: '#/c/' + c.id }));
 }
-
+ 
 /* Reconstruye las fotos y los indicadores de la portada, sin recrear el resto (título, botones, firma). */
 function mountHero(items, preferId) {
   const w = heroSize();
@@ -1204,7 +1236,7 @@ function mountHero(items, preferId) {
   const start = preferId != null ? Math.max(0, items.findIndex(it => it.id === preferId)) : 0;
   heroGo(start, false);
 }
-
+ 
 function buildHero(initialItems) {
   if (!initialItems.length) return null;
   hs.cap = el('a', { class: 'hero-cap' });
@@ -1234,7 +1266,7 @@ function buildHero(initialItems) {
   }
   return hero;
 }
-
+ 
 /* Una vez cargado el árbol, se traen las fotos de TODAS las carpetas y se reemplazan
    las portadas de categoría por una selección al azar de todo el portafolio. */
 function upgradeHeroToAllPhotos(hero) {
@@ -1246,7 +1278,7 @@ function upgradeHeroToAllPhotos(hero) {
     heroRestart();
   }).catch(() => { /* si falla, la portada se queda con las portadas de categoría */ });
 }
-
+ 
 function startHero() {
   document.body.classList.add('hero-on');
   heroRestart();
@@ -1256,7 +1288,7 @@ function startHero() {
   }
   onScroll();
 }
-
+ 
 let scrollTick = false;
 function onScroll() {
   if (scrollTick) return;
@@ -1273,7 +1305,7 @@ function onScroll() {
     top.classList.toggle('solid', y > h - 72);
   });
 }
-
+ 
 /* ───────── Rutas ───────── */
 function route() {
   const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
@@ -1290,7 +1322,7 @@ function route() {
   state.cardTimers.forEach(clearInterval);
   state.cardTimers = [];
   stopHero();
-
+ 
   let view;
   if (parts[0] === 'c' && parts[1]) view = { type: parts[2] ? 'album' : 'cat', catId: parts[1], albumId: parts[2] };
   else if (parts[0] === 'sobre-mi') view = { type: 'about' };
@@ -1299,14 +1331,14 @@ function route() {
   closeMenu();
   updateNav();
   updateAdminBar();
-
+ 
   if (!CONFIG.API_URL) {
     if (view.type === 'about') renderAbout(); else renderSetup();
     return;
   }
   if (view.type === 'about') renderAbout(); else showSkeleton(view);
   const guard = () => token === state.token;
-
+ 
   swr('tree', () => apiGet({ action: 'tree' }), (data, fresh) => {
     if (!guard()) return;
     state.tree = data.categories || [];
@@ -1321,7 +1353,7 @@ function route() {
     if (guard() && view.type !== 'about' && !resolveView(view)) renderNotFound();
   }).catch(err => { if (guard() && view.type !== 'about') renderError(err); });
 }
-
+ 
 function resolveView(view) {
   if (view.type === 'home') return {};
   const cat = state.tree.find(c => c.id === view.catId);
@@ -1330,7 +1362,7 @@ function resolveView(view) {
   const album = cat.albums.find(a => a.id === view.albumId);
   return album ? { cat, album } : null;
 }
-
+ 
 function renderView(view, fresh, token) {
   const r = resolveView(view);
   if (!r) {
@@ -1341,7 +1373,7 @@ function renderView(view, fresh, token) {
   else if (view.type === 'cat') renderCategory(view, r.cat, token);
   else renderAlbum(view, r.cat, r.album, token);
 }
-
+ 
 function showSkeleton(view) {
   const w = el('div', { class: 'page', 'aria-busy': 'true' });
   w.append(el('div', { class: 'sk ' + (view.type === 'home' ? 'sk-lead' : 'sk-title') }));
@@ -1350,18 +1382,18 @@ function showSkeleton(view) {
   w.append(g);
   main.replaceChildren(w);
 }
-
+ 
 function emptyState(title, text, action) {
   return el('div', { class: 'empty' },
     el('h2', { text: title }),
     text ? el('p', { text }) : null,
     action || null);
 }
-
+ 
 function showPage(...kids) {
   main.replaceChildren(el('div', { class: 'page' }, ...kids));
 }
-
+ 
 function renderSetup() {
   document.title = CONFIG.SITE_NAME;
   showPage(emptyState(
@@ -1369,7 +1401,7 @@ function renderSetup() {
     'Abre el archivo config.js y pega en API_URL la dirección de tu aplicación de Apps Script.'
   ));
 }
-
+ 
 function renderError(err) {
   showPage(emptyState(
     'No se pudo cargar',
@@ -1377,7 +1409,7 @@ function renderError(err) {
     el('button', { class: 'btn light', type: 'button', onclick: () => route() }, 'Reintentar')
   ));
 }
-
+ 
 function renderNotFound() {
   document.title = CONFIG.SITE_NAME;
   showPage(emptyState(
@@ -1386,7 +1418,7 @@ function renderNotFound() {
     el('a', { class: 'btn light', href: '#/' }, 'Volver al inicio')
   ));
 }
-
+ 
 /* ───────── Vistas ───────── */
 function crumbs(items) {
   const nav = el('nav', { class: 'crumbs', 'aria-label': 'Ruta' });
@@ -1396,14 +1428,14 @@ function crumbs(items) {
   });
   return nav;
 }
-
+ 
 function pageHead(items, title) {
   return el('header', { class: 'page-head' }, crumbs(items), el('h1', { class: 'title', text: title }));
 }
-
+ 
 const CARD_ROTATE_MS = 4500;    // cada cuánto cambia la foto dentro del cuadro
 const CARD_ROTATE_MAX = 6;      // cuántas fotos como máximo rotan en un mismo cuadro
-
+ 
 /* `photosFn`, si se da, es una función que devuelve (con una promesa) las demás fotos de esa
    categoría o carpeta; con más de una, el cuadro las va rotando de a poco, con un desvanecido. */
 function card(href, coverId, name, first, photosFn) {
@@ -1443,7 +1475,7 @@ function card(href, coverId, name, first, photosFn) {
   }
   return a;
 }
-
+ 
 function renderHome() {
   document.title = CONFIG.SITE_NAME + ' — Fotografía';
   stopHero();
@@ -1473,7 +1505,7 @@ function renderHome() {
   updateAdminBar();
   reveal('home', wrap);
 }
-
+ 
 function renderCategory(view, cat, token) {
   document.title = `${cat.title} — ${CONFIG.SITE_NAME}`;
   view.folderId = cat.id;
@@ -1495,7 +1527,7 @@ function renderCategory(view, cat, token) {
     empty: cat.albums.length ? null : (state.admin ? 'Sube fotos o crea una carpeta con los botones de abajo.' : 'Esta categoría todavía no tiene fotos.'),
   });
 }
-
+ 
 function renderAlbum(view, cat, album, token) {
   document.title = `${album.title} — ${cat.title} — ${CONFIG.SITE_NAME}`;
   view.folderId = album.id;
@@ -1504,13 +1536,13 @@ function renderAlbum(view, cat, album, token) {
     pageHead([{ href: '#/', text: 'Inicio' }, { href: '#/c/' + cat.id, text: cat.title }, { text: album.title }], album.title));
   const host = el('section', { class: 'wall-host' });
   wrap.append(host);
-
+ 
   const idx = cat.albums.findIndex(a => a.id === album.id);
   const next = cat.albums[idx + 1];
   wrap.append(el('nav', { class: 'pager', 'aria-label': 'Más carpetas' },
     el('a', { href: '#/c/' + cat.id }, el('span', { class: 'lbl', text: 'Volver a' }), cat.title),
     next ? el('a', { class: 'next', href: `#/c/${cat.id}/${next.id}` }, el('span', { class: 'lbl', text: 'Siguiente' }), next.title) : null));
-
+ 
   main.replaceChildren(wrap);
   updateAdminBar();
   loadWall(album.id, host, album.title, token, {
@@ -1518,7 +1550,7 @@ function renderAlbum(view, cat, album, token) {
     empty: state.admin ? 'Sube las primeras fotos con el botón de abajo.' : 'Esta carpeta todavía no tiene fotos.',
   });
 }
-
+ 
 function renderAbout() {
   const label = aboutLabel();
   document.title = `${label || 'Sobre mí'} — ${CONFIG.SITE_NAME}`;
@@ -1527,21 +1559,172 @@ function renderAbout() {
       el('a', { class: 'btn light', href: '#/' }, 'Volver al inicio')));
     return;
   }
-  const grid = el('div', { class: 'about' + (photoRef() ? '' : ' solo') });
-  const av = avatar('lg', () => grid.classList.add('solo'));
-  if (av) grid.append(av);
-  const tx = el('div', { class: 'about-tx' }, el('p', { class: 'who', text: CONFIG.SITE_NAME }));
-  aboutParagraphs().forEach(p => tx.append(el('p', { text: p })));
-  const items = contactItems();
-  if (items.length) {
-    const dl = el('dl', { class: 'facts' });
-    items.forEach(it => dl.append(el('dt', { text: it.label }), el('dd', {}, it.href ? linkFor(it) : it.text)));
-    tx.append(dl);
+  const kids = [pageHead([{ href: '#/', text: 'Inicio' }, { text: label }], label)];
+  if (hasAbout()) {
+    const grid = el('div', { class: 'about' + (photoRef() ? '' : ' solo') });
+    const av = avatar('lg', () => grid.classList.add('solo'));
+    if (av) grid.append(av);
+    const tx = el('div', { class: 'about-tx' }, el('p', { class: 'who', text: CONFIG.SITE_NAME }));
+    aboutParagraphs().forEach(p => tx.append(el('p', { text: p })));
+    const items = contactItems();
+    if (items.length) {
+      const dl = el('dl', { class: 'facts' });
+      items.forEach(it => dl.append(el('dt', { text: it.label }), el('dd', {}, it.href ? linkFor(it) : it.text)));
+      tx.append(dl);
+    }
+    grid.append(tx);
+    kids.push(grid);
   }
-  grid.append(tx);
-  showPage(pageHead([{ href: '#/', text: 'Inicio' }, { text: label }], label), grid);
+  const form = buildContactForm();
+  if (form) kids.push(form);
+  const comments = buildCommentsSection();
+  if (comments) kids.push(comments);
+  showPage(...kids);
+  if (comments) loadComments(comments);
 }
-
+ 
+/* ───────── Formulario de contacto ─────────
+   Envía un correo directo a tu cuenta (la misma que usas como administrador). Si además
+   tienes WhatsApp configurado, ofrece un botón para mandarlo por ahí: como no existe una
+   forma gratuita de que un mensaje llegue solo a tu WhatsApp, ese botón abre WhatsApp en
+   el propio teléfono del visitante, con el mensaje ya escrito, listo para pulsar enviar. */
+function buildContactForm() {
+  if (CONFIG.CONTACT_FORM === false) return null;
+  const nameI = el('input', { type: 'text', id: 'ctName', maxlength: '60', autocomplete: 'name', required: true });
+  const phoneI = el('input', { type: 'tel', id: 'ctPhone', maxlength: '30', autocomplete: 'tel' });
+  const emailI = el('input', { type: 'email', id: 'ctEmail', maxlength: '120', autocomplete: 'email' });
+  const msgI = el('textarea', { id: 'ctMsg', maxlength: '1000', rows: '5', required: true });
+  const hp = el('input', { type: 'text', id: 'ctHp', tabindex: '-1', autocomplete: 'off', class: 'hp', 'aria-hidden': 'true' });
+  const err = el('p', { class: 'form-err', role: 'alert' });
+  const submitBtn = el('button', { class: 'btn solid', type: 'submit' }, 'Enviar mensaje');
+  const waNumber = String(CONFIG.WHATSAPP || '').replace(/\D/g, '');
+  const waBtn = waNumber ? el('button', { class: 'btn', type: 'button' }, 'Enviar por WhatsApp') : null;
+  const form = el('form', { class: 'form-card', novalidate: true },
+    el('div', { class: 'field' }, el('label', { for: 'ctName', text: 'Nombre' }), nameI),
+    el('div', { class: 'field' }, el('label', { for: 'ctPhone', text: 'Teléfono (opcional)' }), phoneI),
+    el('div', { class: 'field' }, el('label', { for: 'ctEmail', text: 'Correo (opcional)' }), emailI),
+    el('div', { class: 'field' }, el('label', { for: 'ctMsg', text: 'Mensaje' }), msgI),
+    hp, err,
+    el('div', { class: 'form-row' }, waBtn, submitBtn));
+  if (waBtn) {
+    waBtn.addEventListener('click', () => {
+      const parts = [nameI.value.trim() ? 'Hola, soy ' + nameI.value.trim() + '.' : 'Hola.'];
+      if (msgI.value.trim()) parts.push(msgI.value.trim());
+      if (phoneI.value.trim()) parts.push('Mi teléfono: ' + phoneI.value.trim());
+      window.open('https://wa.me/' + waNumber + '?text=' + encodeURIComponent(parts.join(' \n\n')), '_blank', 'noopener');
+    });
+  }
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    err.textContent = '';
+    const name = nameI.value.trim(), message = msgI.value.trim();
+    if (!name || !message) { err.textContent = 'Escribe tu nombre y tu mensaje.'; return; }
+    if (hp.value) return; // un robot llenó el campo oculto: se ignora en silencio
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando…';
+    try {
+      await publicPost({ action: 'contact', name, phone: phoneI.value.trim(), email: emailI.value.trim(), message });
+      form.reset();
+      toast('Mensaje enviado. Te responderé pronto.');
+    } catch (ex) {
+      err.textContent = ex.message || 'No se pudo enviar. Intenta de nuevo.';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Enviar mensaje';
+    }
+  });
+  return el('section', { 'aria-labelledby': 'contactTitle', 'data-rv': true },
+    el('div', { class: 'sec-head' }, el('h2', { id: 'contactTitle', text: 'Escríbeme' })), form);
+}
+ 
+/* ───────── Comentarios de los visitantes ───────── */
+function formatCommentDate(ts) {
+  try { return new Date(ts).toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' }); }
+  catch (e) { return ''; }
+}
+ 
+function commentItem(c) {
+  const li = el('li', { class: 'comment' },
+    el('div', { class: 'comment-head' },
+      el('span', { class: 'comment-name', text: c.name }),
+      el('span', { class: 'comment-date', text: formatCommentDate(c.ts) })),
+    el('p', { class: 'comment-text', text: c.text }));
+  if (state.admin) {
+    li.append(el('button', {
+      class: 'comment-del', type: 'button', 'aria-label': 'Eliminar este comentario',
+      onclick: async () => {
+        const yes = await confirmDialog('Este comentario se eliminará para siempre.', 'Eliminar');
+        if (!yes) return;
+        try { await post({ action: 'deleteComment', id: c.id }); li.remove(); toast('Comentario eliminado.'); }
+        catch (ex) { toast(ex.message, 'error'); if (ex.code === 'AUTH') openLogin(); }
+      },
+    }, '×'));
+  }
+  return li;
+}
+ 
+function buildCommentsSection() {
+  if (CONFIG.COMMENTS === false) return null;
+  const nameI = el('input', { type: 'text', id: 'cmName', maxlength: '60', autocomplete: 'name', required: true });
+  const textI = el('textarea', { id: 'cmText', maxlength: '500', rows: '3', required: true });
+  const hp = el('input', { type: 'text', id: 'cmHp', tabindex: '-1', autocomplete: 'off', class: 'hp', 'aria-hidden': 'true' });
+  const err = el('p', { class: 'form-err', role: 'alert' });
+  const submitBtn = el('button', { class: 'btn solid', type: 'submit' }, 'Publicar comentario');
+  const form = el('form', { class: 'form-card', novalidate: true },
+    el('div', { class: 'field' }, el('label', { for: 'cmName', text: 'Nombre' }), nameI),
+    el('div', { class: 'field' }, el('label', { for: 'cmText', text: 'Comentario' }), textI),
+    hp, err, el('div', { class: 'form-row' }, submitBtn));
+  const list = el('ul', { class: 'comment-list' });
+  const empty = el('p', { class: 'comment-empty', text: 'Sé el primero en comentar.', hidden: true });
+  const moreBtn = el('button', { class: 'btn more-comments', type: 'button', hidden: true }, 'Ver más comentarios');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    err.textContent = '';
+    const name = nameI.value.trim(), text = textI.value.trim();
+    if (!name || !text) { err.textContent = 'Escribe tu nombre y un comentario.'; return; }
+    if (hp.value) return; // un robot llenó el campo oculto: se ignora en silencio
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Publicando…';
+    try {
+      const r = await publicPost({ action: 'comment', name, text });
+      form.reset();
+      empty.hidden = true;
+      list.prepend(commentItem(r.comment));
+      toast('¡Gracias por tu comentario!');
+    } catch (ex) {
+      err.textContent = ex.message || 'No se pudo publicar. Intenta de nuevo.';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Publicar comentario';
+    }
+  });
+  const section = el('section', { 'aria-labelledby': 'commentsTitle', 'data-rv': true },
+    el('div', { class: 'sec-head' }, el('h2', { id: 'commentsTitle', text: 'Comentarios' })),
+    form, list, empty, moreBtn);
+  section._list = list; section._empty = empty; section._more = moreBtn;
+  moreBtn.addEventListener('click', () => loadComments(section, true));
+  return section;
+}
+ 
+function loadComments(section, more) {
+  const list = section._list, empty = section._empty, moreBtn = section._more;
+  const last = more ? list.lastElementChild : null;
+  const before = last ? last._ts : undefined;
+  moreBtn.disabled = true;
+  if (more) moreBtn.textContent = 'Cargando…';
+  apiGet(before ? { action: 'comments', before } : { action: 'comments' }).then(d => {
+    const comments = d.comments || [];
+    comments.forEach(c => { const li = commentItem(c); li._ts = c.ts; list.append(li); });
+    empty.hidden = list.children.length > 0;
+    moreBtn.hidden = !d.more;
+    moreBtn.disabled = false;
+    moreBtn.textContent = 'Ver más comentarios';
+  }).catch(() => {
+    if (!more) empty.hidden = true; // sin conexión: no se afirma que esté vacío, solo se deja el formulario
+    moreBtn.hidden = true;
+  });
+}
+ 
 function loadWall(folderId, host, title, token, opts) {
   swr('photos:' + folderId, () => apiGet({ action: 'photos', folder: folderId }), data => {
     if (token !== state.token) return;
@@ -1552,7 +1735,7 @@ function loadWall(folderId, host, title, token, opts) {
       el('button', { class: 'btn light', type: 'button', onclick: () => route() }, 'Reintentar')));
   });
 }
-
+ 
 function renderWall(host, ids, folderId, title, opts) {
   host.replaceChildren();
   if (!ids.length) {
@@ -1583,20 +1766,20 @@ function renderWall(host, ids, folderId, title, opts) {
   host.append(wall);
   reveal('wall:' + folderId, wall);
 }
-
+ 
 /* ───────── Visor ───────── */
 const lb = {
   el: $('#lightbox'), img: $('#lbImg'), ids: [], i: 0, title: '',
   open: false, pushed: false, closing: false, opener: null, seq: 0,
 };
-
+ 
 function maxView() { return Math.max(600, Number(CONFIG.MAX_VIEW_PX) || 2000); }
-
+ 
 function lbSize() {
   const px = Math.max(window.innerWidth, window.innerHeight) * Math.min(window.devicePixelRatio || 1, 2);
   return Math.min(maxView(), Math.max(800, Math.ceil(px / 200) * 200));
 }
-
+ 
 function openLightbox(ids, index, title) {
   lb.ids = ids; lb.title = title; lb.opener = document.activeElement;
   lb.open = true; lb.closing = false;
@@ -1608,7 +1791,7 @@ function openLightbox(ids, index, title) {
   showPhoto(index);
   $('#lbClose').focus();
 }
-
+ 
 function showPhoto(i) {
   const n = lb.ids.length;
   lb.i = ((i % n) + n) % n;
@@ -1638,13 +1821,13 @@ function showPhoto(i) {
     [1, -1].forEach(d => { new Image().src = imgSrc(lb.ids[(lb.i + d + n) % n], w); });
   }
 }
-
+ 
 function closeLightbox() {
   if (!lb.open || lb.closing) return;
   lb.closing = true;
   if (lb.pushed) history.back(); else finishClose();
 }
-
+ 
 function finishClose() {
   lb.el.hidden = true;
   lb.open = false; lb.pushed = false; lb.closing = false; lb.seq++;
@@ -1653,11 +1836,11 @@ function finishClose() {
   document.body.classList.remove('lb-open');
   if (lb.opener && document.contains(lb.opener)) lb.opener.focus();
 }
-
+ 
 window.addEventListener('popstate', () => {
   if (lb.open) { lb.pushed = false; finishClose(); }
 });
-
+ 
 document.addEventListener('keydown', e => {
   if (!lb.open) {
     if (e.key === 'Escape' && $('#nav').classList.contains('is-open')) closeMenu();
@@ -1673,7 +1856,7 @@ document.addEventListener('keydown', e => {
     f[(idx + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
   }
 });
-
+ 
 $('#lbClose').addEventListener('click', closeLightbox);
 $('#lbPrev').addEventListener('click', () => showPhoto(lb.i - 1));
 $('#lbNext').addEventListener('click', () => showPhoto(lb.i + 1));
@@ -1688,13 +1871,13 @@ $('#lbStage').addEventListener('click', e => { if (e.target === e.currentTarget)
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) showPhoto(lb.i + (dx < 0 ? 1 : -1));
   }, { passive: true });
 })();
-
+ 
 /* ───────── Protección de las fotos ───────── */
 /* Ninguna página web puede impedir por completo una captura de pantalla. Esto dificulta mucho la
    descarga casual (clic derecho, mantener pulsado, arrastrar, guardar la página, imprimir), hace que
    la foto grande se dibuje en un lienzo con marca de agua y limita la resolución que ve el público. */
 const FONT = "'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif";
-
+ 
 function drawWatermark(x, w, h) {
   const text = CONFIG.WATERMARK_TEXT || ('© ' + CONFIG.SITE_NAME);
   const op = Math.min(0.8, Math.max(0.05, Number(CONFIG.WATERMARK_OPACITY) || 0.22));
@@ -1731,7 +1914,7 @@ function drawWatermark(x, w, h) {
   x.fillText(text, w - fs, h - fs * 0.8);
   x.restore();
 }
-
+ 
 function paintLightbox(im) {
   const cv = lb.img;
   const k = Math.min(1, maxView() / Math.max(im.naturalWidth, im.naturalHeight));
@@ -1741,7 +1924,7 @@ function paintLightbox(im) {
   x.drawImage(im, 0, 0, cv.width, cv.height);
   if (CONFIG.WATERMARK !== false) drawWatermark(x, cv.width, cv.height);
 }
-
+ 
 function initProtection() {
   if (CONFIG.PROTECT === false) return;
   document.documentElement.classList.add('protect');
@@ -1759,7 +1942,7 @@ function initProtection() {
   });
   document.documentElement.style.setProperty('--print-msg', JSON.stringify('© ' + CONFIG.SITE_NAME + '. Contenido protegido: no se puede imprimir.'));
 }
-
+ 
 /* ───────── Contacto rápido (WhatsApp, Instagram, correo) ───────── */
 function dockIcon(kind) {
   const ns = 'http://www.w3.org/2000/svg';
@@ -1783,9 +1966,9 @@ function dockIcon(kind) {
   }
   return svg;
 }
-
+ 
 const dock = { el: null, inner: null, items: [], on: false, raf: 0, lastY: 0, vel: 0, prog: 0 };
-
+ 
 function initDock() {
   if (CONFIG.DOCK === false) return;
   const wa = String(CONFIG.WHATSAPP || '').replace(/\D/g, '');
@@ -1798,7 +1981,7 @@ function initDock() {
   if (ig) list.push({ kind: 'ig', label: 'Instagram', aria: 'Abrir Instagram ' + ig.text, href: ig.href, ext: true });
   if (CONFIG.CONTACT_EMAIL) list.push({ kind: 'ml', label: 'Correo', aria: 'Enviar un correo', href: 'mailto:' + CONFIG.CONTACT_EMAIL });
   if (!list.length) return;
-
+ 
   dock.el = $('#dock');
   dock.inner = el('div', { class: 'dock-in' });
   dock.items = list.map((it, i) => {
@@ -1822,9 +2005,9 @@ function initDock() {
   window.addEventListener('resize', dockKick);
   dockTick();
 }
-
+ 
 function dockKick() { if (dock.on && !dock.raf) dock.raf = requestAnimationFrame(dockTick); }
-
+ 
 /* El grupo recorre el borde derecho según avanzas por la página, y cada logo se mueve con un pequeño
    retraso (efecto cadena) cuando el desplazamiento es rápido. Al detenerte, vuelven a su lugar. */
 function dockTick() {
@@ -1853,7 +2036,7 @@ function dockTick() {
   });
   if (moving) dock.raf = requestAnimationFrame(dockTick);
 }
-
+ 
 /* ───────── Administrador: sesión ───────── */
 function parseJwt(t) {
   try {
@@ -1862,7 +2045,7 @@ function parseJwt(t) {
     return JSON.parse(atob(p));
   } catch (e) { return {}; }
 }
-
+ 
 function restoreAdmin() {
   try {
     const a = JSON.parse(sessionStorage.getItem('pf:admin'));
@@ -1870,14 +2053,14 @@ function restoreAdmin() {
     else sessionStorage.removeItem('pf:admin');
   } catch (e) { state.admin = null; }
 }
-
+ 
 function logout() {
   state.admin = null;
   try { sessionStorage.removeItem('pf:admin'); } catch (e) { /* nada */ }
   updateAdminBar();
   if (CONFIG.API_URL) route();
 }
-
+ 
 let gsiPromise = null;
 function loadGsi() {
   if (window.google && window.google.accounts && window.google.accounts.id) return Promise.resolve();
@@ -1893,7 +2076,7 @@ function loadGsi() {
   }
   return gsiPromise;
 }
-
+ 
 let gsiReady = false;
 async function openLogin() {
   const dlg = $('#dlgLogin'), msg = $('#loginMsg'), host = $('#gbtn');
@@ -1909,7 +2092,7 @@ async function openLogin() {
   }
   google.accounts.id.renderButton(host, { theme: 'outline', size: 'large', text: 'signin_with', shape: 'rectangular', locale: 'es', width: 280 });
 }
-
+ 
 async function onCredential(resp) {
   const msg = $('#loginMsg');
   msg.textContent = 'Verificando…';
@@ -1928,14 +2111,14 @@ async function onCredential(resp) {
       : e.message;
   }
 }
-
+ 
 /* ───────── Administrador: barra y acciones ───────── */
 function syncBarHeight() {
   const bar = $('#adminBar');
   if (bar.hidden) return;
   document.documentElement.style.setProperty('--bar-h', bar.offsetHeight + 'px');
 }
-
+ 
 function updateAdminBar() {
   const bar = $('#adminBar');
   if (!state.admin) {
@@ -1957,7 +2140,7 @@ function updateAdminBar() {
   if (v.type === 'cat') acts.append(b('Nueva carpeta', newFolder), b('Subir fotos', openUpload, true));
   if (v.type === 'album') acts.append(b('Subir fotos', openUpload, true));
 }
-
+ 
 function refreshButton() {
   const ns = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(ns, 'svg');
@@ -1969,7 +2152,7 @@ function refreshButton() {
   return el('button', { class: 'btn ico', type: 'button', 'aria-label': 'Actualizar fotos', title: 'Actualizar fotos', onclick: refreshAll },
     svg, el('span', { class: 'lbl', text: 'Actualizar' }));
 }
-
+ 
 /* Salta la memoria temporal: muestra al instante lo que se subió directo a Drive. */
 async function refreshAll() {
   toast('Actualizando…');
@@ -1985,7 +2168,7 @@ async function refreshAll() {
     if (e.code === 'AUTH') openLogin();
   }
 }
-
+ 
 function nameDialog(opts) {
   const dlg = $('#dlgName'), form = $('#fName'), input = $('#nameInput'), err = $('#nameErr'), ok = $('#nameOk');
   $('#nameTitle').textContent = opts.title;
@@ -2013,7 +2196,7 @@ function nameDialog(opts) {
   dlg.showModal();
   input.focus();
 }
-
+ 
 function newCategory() {
   nameDialog({
     title: 'Nueva categoría',
@@ -2027,7 +2210,7 @@ function newCategory() {
     },
   });
 }
-
+ 
 function newFolder() {
   const v = state.view;
   if (!v.folderId) return;
@@ -2043,7 +2226,7 @@ function newFolder() {
     },
   });
 }
-
+ 
 function confirmDialog(text, okLabel) {
   return new Promise(resolve => {
     const dlg = $('#dlgConfirm');
@@ -2057,7 +2240,7 @@ function confirmDialog(text, okLabel) {
     dlg.showModal();
   });
 }
-
+ 
 async function deletePhoto(id, folderId) {
   const yes = await confirmDialog('La foto se moverá a la papelera de Drive y dejará de verse en la página.', 'Eliminar');
   if (!yes) return;
@@ -2071,13 +2254,13 @@ async function deletePhoto(id, folderId) {
     if (e.code === 'AUTH') openLogin();
   }
 }
-
+ 
 /* ───────── Administrador: foto de perfil ───────── */
 function pickProfile() {
   if (!state.admin) { openLogin(); return; }
   $('#profileInput').click();
 }
-
+ 
 async function uploadProfile(file) {
   if (!file) return;
   if (!ALLOWED.includes(file.type)) { toast('Elige una foto JPG, PNG o WebP.', 'error'); return; }
@@ -2094,10 +2277,10 @@ async function uploadProfile(file) {
     if (e.code === 'AUTH') openLogin();
   }
 }
-
+ 
 /* ───────── Administrador: subida de fotos ───────── */
 const up = { items: [], running: false, folderId: null, seq: 0 };
-
+ 
 function openUpload() {
   const v = state.view;
   if (!v.folderId) return;
@@ -2109,7 +2292,7 @@ function openUpload() {
   syncUpUi();
   $('#dlgUpload').showModal();
 }
-
+ 
 function addFiles(fileList) {
   const files = Array.from(fileList || []);
   const good = files.filter(f => ALLOWED.includes(f.type));
@@ -2122,19 +2305,19 @@ function addFiles(fileList) {
   renderUpList();
   syncUpUi();
 }
-
+ 
 function renderUpList() {
   $('#upList').replaceChildren(...up.items.map(it => it.li));
 }
-
+ 
 function setItem(it, status, text) {
   it.status = status;
   it.li.className = status === 'ok' ? 'ok' : status === 'err' ? 'bad' : '';
   $('.st', it.li).textContent = text;
 }
-
+ 
 function pending() { return up.items.filter(i => i.status !== 'ok'); }
-
+ 
 function syncUpUi() {
   const n = pending().length;
   const anyFailed = up.items.some(i => i.status === 'err');
@@ -2144,11 +2327,11 @@ function syncUpUi() {
   $('#upClose').disabled = up.running;
   $('#fileInput').disabled = up.running;
 }
-
+ 
 function outName(name) {
   return (String(name).replace(/\.[^.]+$/, '') || 'foto') + '.jpg';
 }
-
+ 
 async function prepareImage(file, maxSide) {
   const url = URL.createObjectURL(file);
   try {
@@ -2175,7 +2358,7 @@ async function prepareImage(file, maxSide) {
     URL.revokeObjectURL(url);
   }
 }
-
+ 
 function blobToBase64(blob) {
   return new Promise((res, rej) => {
     const r = new FileReader();
@@ -2184,7 +2367,7 @@ function blobToBase64(blob) {
     r.readAsDataURL(blob);
   });
 }
-
+ 
 async function runUpload() {
   if (up.running) return;
   const queue = pending();
@@ -2196,7 +2379,7 @@ async function runUpload() {
   const total = queue.length;
   const sum = $('#upSum');
   sum.textContent = `Subiendo 0 de ${total}…`;
-
+ 
   async function worker() {
     while (queue.length && !authFail) {
       const it = queue.shift();
@@ -2217,7 +2400,7 @@ async function runUpload() {
     }
   }
   await Promise.all([worker(), worker()]);
-
+ 
   up.running = false;
   syncUpUi();
   if (okCount) {
@@ -2234,7 +2417,7 @@ async function runUpload() {
     $('#dlgUpload').close();
   }
 }
-
+ 
 /* Cuenta esta visita una sola vez, al abrir la página (no en cada cambio de sección dentro de ella).
    No se cuenta si ya habías entrado como administrador, para no inflar el número con tus propias pruebas. */
 function registerVisit() {
@@ -2244,7 +2427,7 @@ function registerVisit() {
     updateAdminBar(); // por si entras como administrador más tarde en la misma visita
   }).catch(() => { /* si falla, sencillamente no se suma esta visita */ });
 }
-
+ 
 /* ───────── Arranque ───────── */
 function init() {
   $('#brand').textContent = CONFIG.SITE_NAME;
@@ -2267,7 +2450,7 @@ function init() {
   });
   restoreAdmin();
   registerVisit();
-
+ 
   $('#menuBtn').addEventListener('click', () => {
     const open = $('#nav').classList.toggle('is-open');
     $('.top').classList.toggle('menu-open', open);
@@ -2283,13 +2466,13 @@ function init() {
   $('#dlgUpload').addEventListener('cancel', e => { if (up.running) e.preventDefault(); });
   $('#fileInput').addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
   $('#profileInput').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; uploadProfile(f); });
-
+ 
   const drop = $('#drop');
   ['dragenter', 'dragover'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); }));
   ['dragleave', 'drop'].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove('over'); }));
   drop.addEventListener('drop', e => { if (!up.running) addFiles(e.dataTransfer.files); });
   drop.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !up.running) { e.preventDefault(); $('#fileInput').click(); } });
-
+ 
   let resizeTimer;
   const onResize = () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { fitNav(); syncBarHeight(); layoutBg(); }, 120); };
   window.addEventListener('resize', onResize);
@@ -2301,8 +2484,9 @@ function init() {
   window.addEventListener('scroll', onScroll, { passive: true });
   route();
 }
-
+ 
 init();
 </script>
 </body>
 </html>
+ 
