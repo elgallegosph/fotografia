@@ -388,6 +388,13 @@ html.protect #lbImg{-webkit-touch-callout:none;-webkit-user-select:none;user-sel
 .stars-display.muted{color:var(--linea)}
 .comments-avg{margin-left:10px;color:var(--humo);font-size:.9rem;font-weight:400;white-space:nowrap}
 .comment-head{align-items:center}
+/* Cortina de privacidad: oculta la página al cambiar de pestaña, de ventana o de app.
+   No impide una captura de pantalla (nada en la web puede hacerlo); ayuda a que la página
+   no quede visible de fondo mientras estás en otro lado. */
+#privacyShade{position:fixed;top:0;right:0;bottom:0;left:0;z-index:200;display:flex;align-items:center;justify-content:center;background:var(--tinta);color:var(--humo);font-family:var(--serif);font-style:italic;font-size:1rem;opacity:0;pointer-events:none;transition:opacity .25s ease}
+#privacyShade.on{opacity:1;pointer-events:auto}
+@media (prefers-reduced-motion:reduce){#privacyShade{transition:none}}
+ 
 /* Efectos de entrada */
 main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
 .rv{opacity:0;transform:translate3d(0,22px,0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0ms)}
@@ -541,6 +548,8 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
  
 <aside class="dock" id="dock" aria-label="Contacto rápido" hidden></aside>
  
+<div id="privacyShade" aria-hidden="true"><span>Contenido oculto</span></div>
+ 
 <div id="toast" popover="manual" role="status" aria-live="polite"></div>
  
 <!-- Tus datos personales viven en config.js -->
@@ -561,7 +570,8 @@ const CONFIG = Object.assign({
   MAX_VIEW_PX: 2000,    // lado mayor (px) de las fotos que ve el público (menos = más protegidas)
   DOCK: true, WHATSAPP_MESSAGE: '',
   CONTACT_FORM: true, COMMENTS: true,
-  PROTECT: true, WATERMARK: true, WATERMARK_TEXT: '', WATERMARK_OPACITY: 0.22,
+  PROTECT: true, WATERMARK: false, WATERMARK_TEXT: '', WATERMARK_OPACITY: 0.55, WATERMARK_STYLE: 'discreta', WATERMARK_STAMP: true, WATERMARK_POSITION: '',
+  PRIVACY_SHADE: true,
   JPEG_QUALITY: 0.86,
 }, window.PORTFOLIO_CONFIG || {});
  
@@ -1972,40 +1982,65 @@ $('#lbStage').addEventListener('click', e => { if (e.target === e.currentTarget)
    la foto grande se dibuje en un lienzo con marca de agua y limita la resolución que ve el público. */
 const FONT = "'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif";
  
+/* La fecha y hora exactas en que se vio la foto, para que la marca cambie todo el tiempo
+   (y no sea siempre el mismo texto). Formato fijo (no depende del idioma del navegador). */
+function watermarkStamp() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, '0');
+  return p(d.getDate()) + '/' + p(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+}
+ 
+const WATERMARK_CORNERS = {
+  'inferior-derecha': [1, 1], 'inferior-izquierda': [0, 1],
+  'superior-derecha': [1, 0], 'superior-izquierda': [0, 0],
+};
+ 
 function drawWatermark(x, w, h) {
-  const text = CONFIG.WATERMARK_TEXT || ('© ' + CONFIG.SITE_NAME);
-  const op = Math.min(0.8, Math.max(0.05, Number(CONFIG.WATERMARK_OPACITY) || 0.22));
-  const fs = Math.max(16, Math.round(Math.min(w, h) * 0.04));
+  const base = CONFIG.WATERMARK_TEXT || ('© ' + CONFIG.SITE_NAME);
+  const text = CONFIG.WATERMARK_STAMP === false ? base : base + ' · ' + watermarkStamp();
+  const style = String(CONFIG.WATERMARK_STYLE || 'discreta').toLowerCase();
+  const fs = Math.max(14, Math.round(Math.min(w, h) * 0.032));
+  if (style === 'mosaico') {
+    // Cubre toda la foto en diagonal: más protección, pero se nota mucho más.
+    const op = Math.min(0.8, Math.max(0.05, Number(CONFIG.WATERMARK_OPACITY) || 0.22));
+    x.save();
+    x.font = '600 ' + fs + 'px ' + FONT;
+    x.textAlign = 'center';
+    x.textBaseline = 'middle';
+    x.lineJoin = 'round';
+    x.lineWidth = Math.max(1, fs / 12);
+    x.translate(w / 2, h / 2);
+    x.rotate(-Math.PI / 6);
+    const gapX = x.measureText(text).width * 1.9, gapY = fs * 5, reach = Math.hypot(w, h);
+    let row = 0;
+    for (let y = -reach; y < reach; y += gapY, row++) {
+      for (let px = -reach + (row % 2) * gapX / 2; px < reach; px += gapX) {
+        x.strokeStyle = 'rgba(0,0,0,' + (op * 0.6) + ')';
+        x.strokeText(text, px, y);
+        x.fillStyle = 'rgba(255,255,255,' + op + ')';
+        x.fillText(text, px, y);
+      }
+    }
+    x.restore();
+  }
+  // Marca discreta, con fecha y hora, en una esquina. Por defecto salta a una esquina al azar
+  // cada vez que se abre una foto, para que no quede siempre en el mismo lugar (más difícil
+  // de recortar). Se puede fijar en una esquina concreta con WATERMARK_POSITION.
+  const posCfg = String(CONFIG.WATERMARK_POSITION || '').toLowerCase();
+  const names = Object.keys(WATERMARK_CORNERS);
+  const [cx, cy] = WATERMARK_CORNERS[posCfg] || WATERMARK_CORNERS[names[Math.floor(Math.random() * names.length)]];
+  const op2 = Math.min(0.9, Math.max(0.1, Number(CONFIG.WATERMARK_OPACITY) || 0.55));
   x.save();
   x.font = '600 ' + fs + 'px ' + FONT;
-  x.textAlign = 'center';
-  x.textBaseline = 'middle';
-  x.lineJoin = 'round';
-  x.lineWidth = Math.max(1, fs / 12);
-  x.translate(w / 2, h / 2);
-  x.rotate(-Math.PI / 6);
-  const gapX = x.measureText(text).width * 1.9, gapY = fs * 5, reach = Math.hypot(w, h);
-  let row = 0;
-  for (let y = -reach; y < reach; y += gapY, row++) {
-    for (let px = -reach + (row % 2) * gapX / 2; px < reach; px += gapX) {
-      x.strokeStyle = 'rgba(0,0,0,' + (op * 0.6) + ')';
-      x.strokeText(text, px, y);
-      x.fillStyle = 'rgba(255,255,255,' + op + ')';
-      x.fillText(text, px, y);
-    }
-  }
-  x.restore();
-  // marca principal, más firme, en la esquina inferior derecha
-  x.save();
-  x.font = '600 ' + Math.round(fs * 1.15) + 'px ' + FONT;
-  x.textAlign = 'right';
-  x.textBaseline = 'bottom';
+  x.textAlign = cx ? 'right' : 'left';
+  x.textBaseline = cy ? 'bottom' : 'top';
   x.lineJoin = 'round';
   x.lineWidth = Math.max(2, fs / 8);
-  x.strokeStyle = 'rgba(0,0,0,0.45)';
-  x.strokeText(text, w - fs, h - fs * 0.8);
-  x.fillStyle = 'rgba(255,255,255,0.7)';
-  x.fillText(text, w - fs, h - fs * 0.8);
+  const px2 = cx ? w - fs * 0.9 : fs * 0.9, py2 = cy ? h - fs * 0.7 : fs * 0.7;
+  x.strokeStyle = 'rgba(0,0,0,' + (op2 * 0.6) + ')';
+  x.strokeText(text, px2, py2);
+  x.fillStyle = 'rgba(255,255,255,' + op2 + ')';
+  x.fillText(text, px2, py2);
   x.restore();
 }
  
@@ -2129,6 +2164,19 @@ function dockTick() {
     it.a.style.setProperty('--rot', it.rot.toFixed(2) + 'deg');
   });
   if (moving) dock.raf = requestAnimationFrame(dockTick);
+}
+ 
+/* Al cambiar de pestaña, de ventana o de aplicación, se oculta la página con una cortina.
+   Vuelve a mostrarse sola en cuanto regresas. No impide una captura de pantalla: eso ninguna
+   página web lo puede hacer (lo controla el sistema operativo, no el navegador). */
+function initPrivacyShade() {
+  if (CONFIG.PRIVACY_SHADE === false) return;
+  const shade = $('#privacyShade');
+  const update = () => shade.classList.toggle('on', document.hidden || !document.hasFocus());
+  document.addEventListener('visibilitychange', update);
+  window.addEventListener('blur', update);
+  window.addEventListener('focus', update);
+  update();
 }
  
 /* ───────── Administrador: sesión ───────── */
@@ -2529,6 +2577,7 @@ function init() {
   renderFooter();
   renderNav();
   initProtection();
+  initPrivacyShade();
   initDock();
   const dim = Number(CONFIG.BACKGROUND_DIM);
   if (isFinite(dim)) document.documentElement.style.setProperty('--bg-dim', String(Math.min(1, Math.max(0, dim))));
