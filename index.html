@@ -1717,10 +1717,10 @@ function formatCommentDate(ts) {
 function commentItem(c, target) {
   const li = el('li', { class: 'comment' },
     el('div', { class: 'comment-head' },
-      el('span', { class: 'comment-name', text: c.name }),
+      el('span', { class: 'comment-name', text: c.name || 'Anónimo' }),
       starsDisplay(c.stars),
       el('span', { class: 'comment-date', text: formatCommentDate(c.ts) })),
-    el('p', { class: 'comment-text', text: c.text }));
+    c.text ? el('p', { class: 'comment-text', text: c.text }) : null);
   if (state.admin) {
     li.append(el('button', {
       class: 'comment-del', type: 'button', 'aria-label': 'Eliminar este comentario',
@@ -1739,16 +1739,16 @@ function commentItem(c, target) {
    una categoría o carpeta — cada una tiene su propio listado y su propio promedio. */
 function buildCommentsSection(target) {
   if (CONFIG.COMMENTS === false) return null;
-  const nameI = el('input', { type: 'text', id: 'cmName', maxlength: '60', autocomplete: 'name', required: true });
-  const textI = el('textarea', { id: 'cmText', maxlength: '500', rows: '3', required: true });
+  const nameI = el('input', { type: 'text', id: 'cmName', maxlength: '60', autocomplete: 'name' });
+  const textI = el('textarea', { id: 'cmText', maxlength: '500', rows: '3' });
   const stars = starsInput();
   const hp = el('input', { type: 'text', id: 'cmHp', tabindex: '-1', autocomplete: 'off', class: 'hp', 'aria-hidden': 'true' });
   const err = el('p', { class: 'form-err', role: 'alert' });
   const submitBtn = el('button', { class: 'btn solid', type: 'submit' }, 'Publicar comentario');
   const form = el('form', { class: 'form-card', novalidate: true },
-    el('div', { class: 'field' }, el('label', { for: 'cmName', text: 'Nombre' }), nameI),
+    el('div', { class: 'field' }, el('label', { for: 'cmName', text: 'Nombre (opcional)' }), nameI),
     el('div', { class: 'field' }, el('label', { text: 'Calificación' }), stars),
-    el('div', { class: 'field' }, el('label', { for: 'cmText', text: 'Comentario' }), textI),
+    el('div', { class: 'field' }, el('label', { for: 'cmText', text: 'Comentario (opcional)' }), textI),
     hp, err, el('div', { class: 'form-row' }, submitBtn));
   const list = el('ul', { class: 'comment-list' });
   const empty = el('p', { class: 'comment-empty', text: 'Sé el primero en comentar y calificar.', hidden: true });
@@ -1758,7 +1758,6 @@ function buildCommentsSection(target) {
     e.preventDefault();
     err.textContent = '';
     const name = nameI.value.trim(), text = textI.value.trim();
-    if (!name || !text) { err.textContent = 'Escribe tu nombre y un comentario.'; return; }
     if (!stars.value) { err.textContent = 'Elige una calificación de 1 a 5 estrellas.'; return; }
     if (hp.value) return; // un robot llenó el campo oculto: se ignora en silencio
     submitBtn.disabled = true;
