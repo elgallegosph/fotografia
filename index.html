@@ -378,6 +378,16 @@ html.protect #lbImg{-webkit-touch-callout:none;-webkit-user-select:none;user-sel
 .more-comments{margin-top:20px}
 .more-comments[hidden]{display:none}
  
+.stars-input{display:flex;gap:6px;margin:2px 0 4px}
+.star-btn{padding:4px;border:0;background:none;color:var(--linea);cursor:pointer;line-height:0}
+.star-btn svg{width:24px;height:24px;display:block}
+.star-btn.on{color:#e8b13c}
+@media (pointer:coarse){.star-btn{padding:8px}}
+.stars-display{display:inline-flex;gap:1px;color:#e8b13c;vertical-align:middle}
+.stars-display svg{width:15px;height:15px;display:block}
+.stars-display.muted{color:var(--linea)}
+.comments-avg{margin-left:10px;color:var(--humo);font-size:.9rem;font-weight:400;white-space:nowrap}
+.comment-head{align-items:center}
 /* Efectos de entrada */
 main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
 .rv{opacity:0;transform:translate3d(0,22px,0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0ms)}
@@ -1510,7 +1520,7 @@ function renderHome() {
   }
   wrap.append(work);
   if (hasAbout()) wrap.append(homeAbout());
-  const homeComments = buildCommentsSection();
+  const homeComments = buildCommentsSection('global');
   if (homeComments) wrap.append(homeComments);
   main.replaceChildren(...(hero ? [hero] : []), wrap);
   if (hero) { startHero(); upgradeHeroToAllPhotos(hero); }
@@ -1532,6 +1542,8 @@ function renderCategory(view, cat, token) {
   }
   const host = el('section', { class: 'wall-host' });
   wrap.append(host);
+  const catComments = buildCommentsSection('global');
+  if (catComments) wrap.append(catComments);
   main.replaceChildren(wrap);
   updateAdminBar();
   reveal('cat', wrap);
@@ -1539,6 +1551,7 @@ function renderCategory(view, cat, token) {
     heading: cat.albums.length ? 'Más fotos' : null,
     empty: cat.albums.length ? null : (state.admin ? 'Sube fotos o crea una carpeta con los botones de abajo.' : 'Esta categoría todavía no tiene fotos.'),
   });
+  if (catComments) loadComments(catComments);
 }
  
 function renderAlbum(view, cat, album, token) {
@@ -1556,12 +1569,15 @@ function renderAlbum(view, cat, album, token) {
     el('a', { href: '#/c/' + cat.id }, el('span', { class: 'lbl', text: 'Volver a' }), cat.title),
     next ? el('a', { class: 'next', href: `#/c/${cat.id}/${next.id}` }, el('span', { class: 'lbl', text: 'Siguiente' }), next.title) : null));
  
+  const albumComments = buildCommentsSection('global');
+  if (albumComments) wrap.append(albumComments);
   main.replaceChildren(wrap);
   updateAdminBar();
   loadWall(album.id, host, album.title, token, {
     count: true,
     empty: state.admin ? 'Sube las primeras fotos con el botón de abajo.' : 'Esta carpeta todavía no tiene fotos.',
   });
+  if (albumComments) loadComments(albumComments);
 }
  
 function renderAbout() {
@@ -1590,7 +1606,7 @@ function renderAbout() {
   }
   const form = buildContactForm();
   if (form) kids.push(form);
-  const comments = buildCommentsSection();
+  const comments = buildCommentsSection('global');
   if (comments) kids.push(comments);
   showPage(...kids);
   if (comments) loadComments(comments);
@@ -1651,15 +1667,58 @@ function buildContactForm() {
 }
  
 /* ───────── Comentarios de los visitantes ───────── */
+const STAR_PATH = 'M12 2.6l2.9 6 6.6.7-4.9 4.5 1.3 6.6-5.9-3.4-5.9 3.4 1.3-6.6-4.9-4.5 6.6-.7z';
+ 
+function starSvg() {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS(ns, 'path');
+  path.setAttribute('d', STAR_PATH);
+  path.setAttribute('fill', 'currentColor');
+  svg.append(path);
+  return svg;
+}
+ 
+/* Estrellas de solo lectura, para mostrar la calificación de un comentario o el promedio. */
+function starsDisplay(value) {
+  const v = Math.round(Number(value) || 0);
+  const wrap = el('span', { class: 'stars-display' + (v ? '' : ' muted'), role: 'img', 'aria-label': v ? v + ' de 5 estrellas' : 'Sin calificación' });
+  for (let i = 1; i <= 5; i++) {
+    const s = starSvg();
+    if (i > v) s.style.opacity = '.35';
+    wrap.append(s);
+  }
+  return wrap;
+}
+ 
+/* Selector de estrellas para calificar (1 a 5, obligatorio antes de publicar). */
+function starsInput() {
+  const wrap = el('div', { class: 'stars-input', role: 'radiogroup', 'aria-label': 'Calificación' });
+  wrap.value = 0;
+  const btns = [1, 2, 3, 4, 5].map(n => {
+    const b = el('button', {
+      class: 'star-btn', type: 'button', role: 'radio', 'aria-checked': 'false', 'aria-label': n + ' estrella' + (n === 1 ? '' : 's'),
+      onclick: () => { wrap.value = n; btns.forEach((x, i) => { x.classList.toggle('on', i < n); x.setAttribute('aria-checked', String(i < n)); }); },
+    }, starSvg());
+    wrap.append(b);
+    return b;
+  });
+  wrap.reset = () => { wrap.value = 0; btns.forEach(x => { x.classList.remove('on'); x.setAttribute('aria-checked', 'false'); }); };
+  return wrap;
+}
+ 
 function formatCommentDate(ts) {
   try { return new Date(ts).toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' }); }
   catch (e) { return ''; }
 }
  
-function commentItem(c) {
+function commentItem(c, target) {
   const li = el('li', { class: 'comment' },
     el('div', { class: 'comment-head' },
       el('span', { class: 'comment-name', text: c.name }),
+      starsDisplay(c.stars),
       el('span', { class: 'comment-date', text: formatCommentDate(c.ts) })),
     el('p', { class: 'comment-text', text: c.text }));
   if (state.admin) {
@@ -1668,7 +1727,7 @@ function commentItem(c) {
       onclick: async () => {
         const yes = await confirmDialog('Este comentario se eliminará para siempre.', 'Eliminar');
         if (!yes) return;
-        try { await post({ action: 'deleteComment', id: c.id }); li.remove(); toast('Comentario eliminado.'); }
+        try { await post({ action: 'deleteComment', target, id: c.id }); li.remove(); toast('Comentario eliminado.'); }
         catch (ex) { toast(ex.message, 'error'); if (ex.code === 'AUTH') openLogin(); }
       },
     }, '×'));
@@ -1676,33 +1735,45 @@ function commentItem(c) {
   return li;
 }
  
-function buildCommentsSection() {
+/* `target` identifica de quién son los comentarios: 'global' (inicio y Sobre mí), o el id de
+   una categoría o carpeta — cada una tiene su propio listado y su propio promedio. */
+function buildCommentsSection(target) {
   if (CONFIG.COMMENTS === false) return null;
   const nameI = el('input', { type: 'text', id: 'cmName', maxlength: '60', autocomplete: 'name', required: true });
   const textI = el('textarea', { id: 'cmText', maxlength: '500', rows: '3', required: true });
+  const stars = starsInput();
   const hp = el('input', { type: 'text', id: 'cmHp', tabindex: '-1', autocomplete: 'off', class: 'hp', 'aria-hidden': 'true' });
   const err = el('p', { class: 'form-err', role: 'alert' });
   const submitBtn = el('button', { class: 'btn solid', type: 'submit' }, 'Publicar comentario');
   const form = el('form', { class: 'form-card', novalidate: true },
     el('div', { class: 'field' }, el('label', { for: 'cmName', text: 'Nombre' }), nameI),
+    el('div', { class: 'field' }, el('label', { text: 'Calificación' }), stars),
     el('div', { class: 'field' }, el('label', { for: 'cmText', text: 'Comentario' }), textI),
     hp, err, el('div', { class: 'form-row' }, submitBtn));
   const list = el('ul', { class: 'comment-list' });
-  const empty = el('p', { class: 'comment-empty', text: 'Sé el primero en comentar.', hidden: true });
+  const empty = el('p', { class: 'comment-empty', text: 'Sé el primero en comentar y calificar.', hidden: true });
   const moreBtn = el('button', { class: 'btn more-comments', type: 'button', hidden: true }, 'Ver más comentarios');
+  const avgLabel = el('span', { class: 'comments-avg' });
   form.addEventListener('submit', async e => {
     e.preventDefault();
     err.textContent = '';
     const name = nameI.value.trim(), text = textI.value.trim();
     if (!name || !text) { err.textContent = 'Escribe tu nombre y un comentario.'; return; }
+    if (!stars.value) { err.textContent = 'Elige una calificación de 1 a 5 estrellas.'; return; }
     if (hp.value) return; // un robot llenó el campo oculto: se ignora en silencio
     submitBtn.disabled = true;
     submitBtn.textContent = 'Publicando…';
     try {
-      const r = await publicPost({ action: 'comment', name, text });
+      const r = await publicPost({ action: 'comment', target, name, text, stars: stars.value });
       form.reset();
+      stars.reset();
       empty.hidden = true;
-      list.prepend(commentItem(r.comment));
+      const li = commentItem(r.comment, target);
+      li._ts = r.comment.ts;
+      list.prepend(li);
+      section._count = (section._count || 0) + 1;
+      section._sum = (section._sum || 0) + r.comment.stars;
+      updateAvg(section);
       toast('¡Gracias por tu comentario!');
     } catch (ex) {
       err.textContent = ex.message || 'No se pudo publicar. Intenta de nuevo.';
@@ -1712,26 +1783,37 @@ function buildCommentsSection() {
     }
   });
   const section = el('section', { 'aria-labelledby': 'commentsTitle', 'data-rv': true },
-    el('div', { class: 'sec-head' }, el('h2', { id: 'commentsTitle', text: 'Comentarios' })),
+    el('div', { class: 'sec-head' }, el('h2', { id: 'commentsTitle', text: 'Comentarios' }), avgLabel),
     form, list, empty, moreBtn);
-  section._list = list; section._empty = empty; section._more = moreBtn;
+  section._target = target; section._list = list; section._empty = empty; section._more = moreBtn; section._avg = avgLabel;
   moreBtn.addEventListener('click', () => loadComments(section, true));
   return section;
 }
  
+function updateAvg(section) {
+  const n = section._count || 0;
+  section._avg.replaceChildren();
+  if (!n) return;
+  const avg = (section._sum || 0) / n;
+  section._avg.append(starsDisplay(avg), document.createTextNode(' ' + avg.toFixed(1) + ' · ' + n + (n === 1 ? ' comentario' : ' comentarios')));
+}
+ 
 function loadComments(section, more) {
-  const list = section._list, empty = section._empty, moreBtn = section._more;
+  const list = section._list, empty = section._empty, moreBtn = section._more, target = section._target;
   const last = more ? list.lastElementChild : null;
   const before = last ? last._ts : undefined;
   moreBtn.disabled = true;
   if (more) moreBtn.textContent = 'Cargando…';
-  apiGet(before ? { action: 'comments', before } : { action: 'comments' }).then(d => {
+  const params = { action: 'comments', target };
+  if (before) params.before = before;
+  apiGet(params).then(d => {
     const comments = d.comments || [];
-    comments.forEach(c => { const li = commentItem(c); li._ts = c.ts; list.append(li); });
+    comments.forEach(c => { const li = commentItem(c, target); li._ts = c.ts; list.append(li); });
     empty.hidden = list.children.length > 0;
     moreBtn.hidden = !d.more;
     moreBtn.disabled = false;
     moreBtn.textContent = 'Ver más comentarios';
+    if (!more) { section._count = d.count || 0; section._sum = (d.avg || 0) * (d.count || 0); updateAvg(section); }
   }).catch(() => {
     if (!more) empty.hidden = true; // sin conexión: no se afirma que esté vacío, solo se deja el formulario
     moreBtn.hidden = true;
