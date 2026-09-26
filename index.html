@@ -1510,8 +1510,11 @@ function renderHome() {
   }
   wrap.append(work);
   if (hasAbout()) wrap.append(homeAbout());
+  const homeComments = buildCommentsSection();
+  if (homeComments) wrap.append(homeComments);
   main.replaceChildren(...(hero ? [hero] : []), wrap);
   if (hero) { startHero(); upgradeHeroToAllPhotos(hero); }
+  if (homeComments) loadComments(homeComments);
   updateAdminBar();
   reveal('home', wrap);
 }
@@ -2429,13 +2432,14 @@ async function runUpload() {
 }
  
 /* Cuenta esta visita una sola vez, al abrir la página (no en cada cambio de sección dentro de ella).
-   No se cuenta si ya habías entrado como administrador, para no inflar el número con tus propias pruebas. */
+   No se cuenta si ya habías entrado como administrador, para no inflar el número con tus propias pruebas;
+   en ese caso, igual se consulta el total (sin sumar), para que sigas viéndolo en la barra de abajo. */
 function registerVisit() {
-  if (!CONFIG.API_URL || state.admin) return;
-  apiGet({ action: 'view' }).then(d => {
+  if (!CONFIG.API_URL) return;
+  apiGet({ action: state.admin ? 'views' : 'view' }).then(d => {
     state.views = d.views;
-    updateAdminBar(); // por si entras como administrador más tarde en la misma visita
-  }).catch(() => { /* si falla, sencillamente no se suma esta visita */ });
+    updateAdminBar();
+  }).catch(() => { /* si falla, sencillamente no se muestra el total esta vez */ });
 }
  
 /* ───────── Arranque ───────── */
