@@ -242,7 +242,7 @@ dialog .row{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
 .lb-close{top:calc(8px + env(safe-area-inset-top));right:8px}
 .lb-prev{left:8px;top:50%;margin-top:-24px}
 .lb-next{right:8px;top:50%;margin-top:-24px}
-.lb-bar{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:8px var(--gr) calc(12px + env(safe-area-inset-bottom)) var(--gl);color:var(--humo);font-size:.95rem}
+.lb-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:8px var(--gr) calc(12px + env(safe-area-inset-bottom)) var(--gl);color:var(--humo);font-size:.95rem}
 .lb-count{font-family:var(--serif);font-style:italic}
  
 /* Avisos */
@@ -395,6 +395,21 @@ html.protect #lbImg{-webkit-touch-callout:none;-webkit-user-select:none;user-sel
 #privacyShade.on{opacity:1;pointer-events:auto}
 @media (prefers-reduced-motion:reduce){#privacyShade{transition:none}}
  
+/* Me gusta en las fotos */
+.like{position:absolute;left:8px;bottom:8px;z-index:2;display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px 0 10px;border:0;border-radius:999px;background:rgba(20,20,19,.66);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:var(--marfil);font:inherit;font-size:.85rem;font-weight:600;line-height:1;cursor:pointer;transition:background-color .2s,color .2s}
+.like:hover{background:rgba(20,20,19,.85)}
+.like[hidden]{display:none}
+.like svg{width:18px;height:18px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:fill .2s}
+.like.on{color:#ff5d7a}
+.like.on svg{fill:currentColor}
+.like-n:empty{display:none}
+.like.pop svg{animation:likepop .55s cubic-bezier(.2,1.6,.4,1)}
+@keyframes likepop{0%{transform:scale(1)}40%{transform:scale(1.55)}100%{transform:scale(1)}}
+.lb-right{display:flex;align-items:center;gap:14px}
+.lb-like{position:static;background:rgba(239,238,233,.12);min-height:40px}
+.lb-like:hover{background:rgba(239,238,233,.22)}
+@media (pointer:coarse){.like{min-height:44px;min-width:44px;justify-content:center}}
+ 
 /* Efectos de entrada */
 main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
 .rv{opacity:0;transform:translate3d(0,22px,0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0ms)}
@@ -541,7 +556,7 @@ main.enter{animation:rise .5s cubic-bezier(.2,.7,.2,1)}
   <button class="lb-btn lb-close" id="lbClose" type="button" aria-label="Cerrar"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   <button class="lb-btn lb-prev" id="lbPrev" type="button" aria-label="Foto anterior"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
   <button class="lb-btn lb-next" id="lbNext" type="button" aria-label="Foto siguiente"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
-  <div class="lb-bar"><span id="lbTitle"></span><span class="lb-count" id="lbCount"></span></div>
+  <div class="lb-bar"><span id="lbTitle"></span><span class="lb-right" id="lbRight"><span class="lb-count" id="lbCount"></span></span></div>
 </div>
  
 <input type="file" id="profileInput" accept="image/jpeg,image/png,image/webp" hidden>
@@ -572,13 +587,14 @@ const CONFIG = Object.assign({
   CONTACT_FORM: true, COMMENTS: true,
   PROTECT: true, WATERMARK: false, WATERMARK_TEXT: '', WATERMARK_OPACITY: 0.55, WATERMARK_STYLE: 'discreta', WATERMARK_STAMP: true, WATERMARK_POSITION: '',
   PRIVACY_SHADE: true,
+  LIKES: true,
   JPEG_QUALITY: 0.86,
 }, window.PORTFOLIO_CONFIG || {});
  
 const $ = (s, r) => (r || document).querySelector(s);
 const main = $('#main');
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp'];
-const state = { tree: [], profile: null, assets: {}, admin: null, view: { type: 'home' }, token: 0, routeKey: null, revealed: new Set(), cardTimers: [], views: null };
+const state = { tree: [], profile: null, assets: {}, admin: null, view: { type: 'home' }, token: 0, routeKey: null, revealed: new Set(), cardTimers: [], views: null, likes: {}, likesReady: false };
 const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
  
 class ApiError extends Error {
@@ -1865,10 +1881,111 @@ function renderWall(host, ids, folderId, title, opts) {
         onclick: () => deletePhoto(id, folderId),
       }, '×'));
     }
+    if (likeEnabled()) tile.append(likeButton(id));
     wall.append(tile);
   });
   host.append(wall);
   reveal('wall:' + folderId, wall);
+  loadLikes();
+}
+ 
+/* ───────── Me gusta en las fotos ─────────
+   Los conteos viven en el servidor (Apps Script). Cada navegador recuerda cuáles fotos ya marcó
+   para no dejar dar más de un me gusta por foto desde el mismo lugar. Los visitantes son anónimos,
+   así que nada impide del todo que alguien lo infle a propósito con herramientas técnicas.
+   Si el servidor aún no sabe de me gusta (un Code.gs viejo), los botones simplemente no aparecen. */
+const LIKED_KEY = 'pf:liked';
+const liked = new Set();
+try { JSON.parse(localStorage.getItem(LIKED_KEY) || '[]').forEach(id => liked.add(String(id))); } catch (e) { /* nada */ }
+const pendingLikes = new Set();
+let likesFetchedAt = 0;
+ 
+function likeEnabled() { return CONFIG.LIKES !== false; }
+ 
+function saveLiked() {
+  try { localStorage.setItem(LIKED_KEY, JSON.stringify([...liked].slice(-2000))); } catch (e) { /* almacenamiento lleno o bloqueado */ }
+}
+ 
+function heartSvg() {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('aria-hidden', 'true');
+  const path = document.createElementNS(ns, 'path');
+  path.setAttribute('d', 'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z');
+  svg.append(path);
+  return svg;
+}
+ 
+function refreshLikeBtn(b) {
+  const id = b.dataset.like;
+  const on = !!id && liked.has(id);
+  const n = (id && state.likes[id]) || 0;
+  b.hidden = !(state.likesReady && id);
+  b.classList.toggle('on', on);
+  b.setAttribute('aria-pressed', String(on));
+  b.setAttribute('aria-label', on ? 'Quitar mi me gusta (' + n + ' en total)' : (n ? 'Me gusta (' + n + ' en total)' : 'Me gusta'));
+  $('.like-n', b).textContent = n ? n.toLocaleString('es') : '';
+}
+ 
+function likeButton(id, extraClass) {
+  const b = el('button', { class: 'like' + (extraClass ? ' ' + extraClass : ''), type: 'button', hidden: true });
+  if (id) b.dataset.like = id;
+  b.append(heartSvg(), el('span', { class: 'like-n' }));
+  b.addEventListener('click', () => toggleLike(b.dataset.like));
+  refreshLikeBtn(b);
+  return b;
+}
+ 
+function refreshAllLikes() { document.querySelectorAll('.like').forEach(refreshLikeBtn); }
+ 
+function popHeart(id) {
+  document.querySelectorAll('.like').forEach(b => {
+    if (b.dataset.like !== id) return;
+    b.classList.remove('pop');
+    void b.offsetWidth;
+    b.classList.add('pop');
+  });
+}
+ 
+async function toggleLike(id) {
+  if (!id || !state.likesReady || pendingLikes.has(id)) return;
+  pendingLikes.add(id);
+  const wasLiked = liked.has(id);
+  const before = state.likes[id] || 0;
+  // Se refleja al instante; si el servidor falla, se devuelve todo como estaba.
+  if (wasLiked) { liked.delete(id); state.likes[id] = Math.max(0, before - 1); }
+  else { liked.add(id); state.likes[id] = before + 1; }
+  saveLiked();
+  refreshAllLikes();
+  if (!wasLiked) popHeart(id);
+  try {
+    const r = await publicPost({ action: 'like', id, unlike: wasLiked });
+    if (typeof r.likes === 'number') state.likes[id] = r.likes;
+  } catch (e) {
+    if (wasLiked) liked.add(id); else liked.delete(id);
+    state.likes[id] = before;
+    saveLiked();
+    toast((e && e.message) || 'No se pudo guardar tu me gusta. Inténtalo de nuevo.', 'error');
+  } finally {
+    pendingLikes.delete(id);
+    refreshAllLikes();
+  }
+}
+ 
+/* Trae todos los conteos (como mucho una vez cada 15 segundos). */
+function loadLikes(force) {
+  if (!likeEnabled() || !CONFIG.API_URL) return;
+  if (!force && Date.now() - likesFetchedAt < 15000) return;
+  likesFetchedAt = Date.now();
+  apiGet({ action: 'likes' }).then(d => {
+    if (!d || !d.likes || typeof d.likes !== 'object') return; // servidor sin me gusta: los botones no aparecen
+    const inFlight = {};
+    pendingLikes.forEach(id => { inFlight[id] = state.likes[id]; }); // un me gusta en camino no se pisa con datos más viejos
+    state.likes = Object.assign({}, d.likes, inFlight);
+    state.likesReady = true;
+    refreshAllLikes();
+  }).catch(() => { /* sin conexión: los botones aparecen cuando la haya */ });
 }
  
 /* ───────── Visor ───────── */
@@ -1906,6 +2023,8 @@ function showPhoto(i) {
   lb.img.classList.remove('ok');
   lb.img.setAttribute('aria-label', `${lb.title}, foto ${lb.i + 1} de ${n}`);
   $('#lbCount').textContent = `${lb.i + 1} / ${n}`;
+  const lk = $('#lbLike');
+  if (lk) { lk.dataset.like = id; refreshLikeBtn(lk); }
   const loader = new Image();
   let triedFallback = false;
   loader.onload = () => {
@@ -1954,7 +2073,7 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'ArrowRight') showPhoto(lb.i + 1);
   else if (e.key === 'ArrowLeft') showPhoto(lb.i - 1);
   else if (e.key === 'Tab') {
-    const f = ['#lbClose', '#lbPrev', '#lbNext'].map(s => $(s));
+    const f = ['#lbClose', '#lbPrev', '#lbNext', '#lbLike'].map(s => $(s)).filter(x => x && !x.hidden);
     const idx = f.indexOf(document.activeElement);
     e.preventDefault();
     f[(idx + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
@@ -2576,6 +2695,7 @@ function init() {
   $('#brand').textContent = CONFIG.SITE_NAME;
   renderFooter();
   renderNav();
+  if (likeEnabled()) { const lk = likeButton(null, 'lb-like'); lk.id = 'lbLike'; $('#lbRight').prepend(lk); loadLikes(true); }
   initProtection();
   initPrivacyShade();
   initDock();
