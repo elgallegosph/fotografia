@@ -256,9 +256,14 @@ body.has-admin #toast{bottom:calc(var(--bar-h,76px) + 12px)}
 .hero-media{position:absolute;left:0;right:0;top:-80px;bottom:0;transform:translate3d(0,calc(var(--p,0) * 80px),0);will-change:transform}
 .slide{position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity 1.3s ease}
 .slide.on{opacity:1}
-.slide img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 30%}
-.slide.kb img{animation:kb 9s cubic-bezier(.25,.6,.3,1) forwards}
-@keyframes kb{from{transform:scale(1.13) translate3d(var(--kx,1.5%),1%,0)}to{transform:scale(1) translate3d(0,0,0)}}
+.slide img{display:block}
+/* Relleno: la misma foto en miniatura y estirada (difusa), para que los costados nunca queden vacíos */
+.slide .fill{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:cover;opacity:.82}   /* miniatura diminuta estirada: se ve desenfocada sin el costo de un desenfoque de verdad */
+/* Foto completa, sin recortar: cabe entera bajo el menú (80 px de margen extra para el efecto de profundidad + la altura del menú) */
+.slide .fg{position:absolute;left:0;top:calc(80px + var(--cabecera));width:100%;height:calc(100% - 80px - var(--cabecera));object-fit:contain;object-position:center top}   /* pegada arriba: así el título de abajo cae sobre el relleno y no tapa la foto */
+/* El zoom lento solo se acerca hasta el tamaño completo: nunca pasa de 1, así que jamás recorta */
+.slide.kb .fg{animation:kb 9s cubic-bezier(.25,.6,.3,1) forwards}
+@keyframes kb{from{transform:scale(.93)}to{transform:scale(1)}}
 .hero::before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;z-index:1;background:linear-gradient(to bottom,rgba(20,20,19,.6) 0,rgba(20,20,19,0) 24%),linear-gradient(to top,rgba(20,20,19,.82) 0,rgba(20,20,19,.25) 45%,rgba(20,20,19,0) 70%)}
 .hero-in{position:relative;z-index:2;height:100%;max-width:var(--max);margin:0 auto;padding:0 var(--gr) clamp(28px,5vw,56px) var(--gl);display:flex;flex-direction:column;justify-content:flex-end;gap:clamp(20px,3vw,32px);opacity:calc(1 - var(--p,0) * 1.15);transform:translate3d(0,calc(var(--p,0) * -28px),0)}
  
@@ -1262,15 +1267,24 @@ function mountHero(items, preferId) {
   hs.items = items;
   hs.i = -1; // fuerza a heroGo a tratarlo como un cambio, aunque el índice numérico coincida
   hs.slides = items.map((it, i) => {
-    const img = document.createElement('img');
+    const img = document.createElement('img');      // la foto completa, al frente
+    img.className = 'fg';
     img.alt = '';
     img.decoding = 'async';
     if (i === 0) img.setAttribute('fetchpriority', 'high');
-    let fb = false;
+    const fill = document.createElement('img');     // la misma foto en miniatura (unos pocos KB), estirada: rellena los costados con un fondo difuso
+    fill.className = 'fill';
+    fill.alt = '';
+    fill.decoding = 'async';
+    fill.setAttribute('aria-hidden', 'true');
+    let fb = false, fbFill = false;
     img.addEventListener('error', () => { if (!fb) { fb = true; img.src = imgFallback(it.id, w); } });
-    const slide = el('div', { class: 'slide' }, img);
-    slide.style.setProperty('--kx', i % 2 ? '-1.5%' : '1.5%');
-    slide._load = () => { if (!img.getAttribute('src')) img.src = imgSrc(it.id, w); return img; };
+    fill.addEventListener('error', () => { if (!fbFill) { fbFill = true; fill.src = imgFallback(it.id, 96); } });
+    const slide = el('div', { class: 'slide' }, fill, img);
+    slide._load = () => {
+      if (!img.getAttribute('src')) { fill.src = imgSrc(it.id, 96); img.src = imgSrc(it.id, w); }
+      return img;
+    };
     return slide;
   });
   // Con muchas fotos, un punto por foto sería ilegible: se cambia por un contador "3 / 24".
